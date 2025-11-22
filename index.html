@@ -170,7 +170,18 @@
       width: 6px;
       height: 6px;
       border-radius: 999px;
+      background: #6b7280;
+      transition: background 0.15s, box-shadow 0.15s;
+    }
+
+    .pill-mini .dot.on {
       background: #22c55e;
+      box-shadow: 0 0 10px rgba(34, 197, 94, 0.9);
+    }
+
+    .pill-mini .dot.off {
+      background: #f97316;
+      box-shadow: none;
     }
 
     /* ===================== */
@@ -313,7 +324,7 @@
     .btn-danger,
     .btn-ghost {
       flex: 1;
-      min-width: 140px;
+      min-width: 120px;
       border-radius: 999px;
       padding: 8px 10px;
       font-size: 0.86rem;
@@ -494,7 +505,7 @@
           切断 / サインアウト
         </button>
         <span class="pill-mini" id="auth-status">
-          <span class="dot"></span> ステータス: 未連携
+          <span class="dot off" id="auth-dot"></span> ステータス: 未連携
         </span>
       </div>
     </header>
@@ -573,13 +584,13 @@
 
         <div class="button-row">
           <button id="btn-generate" class="btn-main">
-            <span class="icon">✨</span> 検索条件を自動生成
+            <span class="icon">✨</span> 条件を作成
           </button>
           <button id="btn-preview" class="btn-secondary">
-            <span class="icon">🔍</span> プレビュー（条件チェック）
+            <span class="icon">🔍</span> プレビュー
           </button>
           <button id="btn-execute" class="btn-danger">
-            <span class="icon">⚠️</span> この条件で実行（テスト）
+            <span class="icon">⚠️</span> 本番実行
           </button>
         </div>
       </section>
@@ -597,31 +608,44 @@
         <div class="result-block">
           <div class="result-header">
             <span class="title">現在のプレビュー</span>
-            <span class="counter" id="preview-count-label">対象件数: - 件（サンプル）</span>
+            <span class="counter" id="preview-count-label">対象件数: - 件</span>
           </div>
-          <textarea id="preview-text" rows="6" placeholder="「検索条件を自動生成 → プレビュー」の順に操作すると、ここに結果の例が表示されます。"></textarea>
+          <textarea id="preview-text" rows="6" placeholder="「条件を作成 → プレビュー」の順に操作すると、ここに Gmail API のレスポンスが表示されます。"></textarea>
         </div>
 
         <div class="result-block danger">
           <div class="result-header">
-            <span class="title">実行結果</span>
-            <span class="counter" id="result-count-label">最終件数: - 件（サンプル）</span>
+            <span class="title">実行結果ログ（Gmail API レスポンス）</span>
+            <span class="counter" id="result-count-label">最終件数: - 件</span>
           </div>
-          <textarea id="result-text" rows="6" placeholder="まだ実行結果はありません。「この条件で実行」を押すと、ここに実行内容の履歴（実行結果）が表示されます。"></textarea>
+          <textarea id="result-text" rows="6" placeholder="「本番実行」を押すと、ここに Gmail API のレスポンス全体がログとして保存されます。"></textarea>
         </div>
 
         <div class="button-row">
           <button id="btn-clear-result" class="btn-ghost">
-            実行結果をクリア
+            実行結果ログをクリア
           </button>
         </div>
 
+        <!-- 広告スロット 1 -->
         <div class="ad-slot">
-          <strong>収益スペース（将来用）</strong><br />
-          ここに広告バナー、アフィリエイトリンク、有料版への導線などを追加できます。<br />
-          例：<br />
-          ・「高速版」や「自動定期実行版」へのリンク<br />
-          ・メール断捨離のノウハウ記事へのリンク
+          <strong>広告スロット A（上部）</strong><br />
+          ここにバナー広告やアフィリエイトリンクを設置できます。<br />
+          例：有料版「自動毎日クリーン」への導線や、メール整理ノウハウ記事へのリンクなど。
+        </div>
+
+        <!-- 広告スロット 2 -->
+        <div class="ad-slot">
+          <strong>広告スロット B（中段）</strong><br />
+          ・Gmail 整理代行サービス<br />
+          ・オンライン講座 / note 記事への導線<br />
+          ・別ツール（iCloud 版 / 仕事用版）へのリンク
+        </div>
+
+        <!-- 広告スロット 3 -->
+        <div class="ad-slot">
+          <strong>広告スロット C（フッター横）</strong><br />
+          小さめテキストリンク広告や、クーポンコード、紹介プログラムなどを配置する想定スペースです。
         </div>
       </section>
     </main>
@@ -636,43 +660,60 @@
   <!-- ===================== -->
   <script>
     // ====== OAuth 設定 ======
-    const CLIENT_ID = "923017588150-th43jikkldliggrt258aqg95hrk2ob73.apps.googleusercontent.com";
+    const CLIENT_ID =
+      "923017588150-th43jikkldliggrt258aqg95hrk2ob73.apps.googleusercontent.com";
     const REDIRECT_URI = "https://automaker-hub.github.io/";
-
     const SCOPES = "https://www.googleapis.com/auth/gmail.modify";
+
+    const API_BASE = "https://gmail.googleapis.com/gmail/v1/users/me";
 
     const authStatusEl = document.getElementById("auth-status");
 
     function setAuthStatus(connected) {
       if (!authStatusEl) return;
       authStatusEl.innerHTML =
-        '<span class="dot"></span> ステータス: ' + (connected ? "連携済み ✔" : "未連携");
+        '<span class="dot ' +
+        (connected ? "on" : "off") +
+        '" id="auth-dot"></span> ステータス: ' +
+        (connected ? "連携済み ✔" : "未連携");
+    }
+
+    // アクセストークン取得（localStorage）
+    function getStoredToken() {
+      const token = localStorage.getItem("gmail_token");
+      setAuthStatus(!!token);
+      return token;
     }
 
     // Google OAuth 開始
     function loginWithGoogle() {
       const url =
         "https://accounts.google.com/o/oauth2/v2/auth" +
-        "?client_id=" + encodeURIComponent(CLIENT_ID) +
-        "&redirect_uri=" + encodeURIComponent(REDIRECT_URI) +
+        "?client_id=" +
+        encodeURIComponent(CLIENT_ID) +
+        "&redirect_uri=" +
+        encodeURIComponent(REDIRECT_URI) +
         "&response_type=token" +
-        "&scope=" + encodeURIComponent(SCOPES) +
+        "&scope=" +
+        encodeURIComponent(SCOPES) +
         "&include_granted_scopes=true" +
         "&prompt=consent";
 
       window.location.href = url;
     }
 
-    document.getElementById("oauth-btn").addEventListener("click", loginWithGoogle);
+    document
+      .getElementById("oauth-btn")
+      .addEventListener("click", loginWithGoogle);
 
     // サインアウト
     document.getElementById("btn-signout").addEventListener("click", () => {
       localStorage.removeItem("gmail_token");
       setAuthStatus(false);
-      alert("サインアウトしました");
+      alert("サインアウトしました（ブラウザに保存されていたトークンを削除しました）");
     });
 
-    // アクセストークン取得
+    // URL ハッシュからアクセストークンを抽出
     function extractAccessToken() {
       const hash = window.location.hash.substring(1);
       if (hash) {
@@ -683,16 +724,49 @@
           setAuthStatus(true);
           console.log("Google OAuth 成功！アクセストークンを保存しました");
           // ハッシュをURLから消して見た目をキレイに
-          history.replaceState(null, "", window.location.pathname + window.location.search);
+          history.replaceState(
+            null,
+            "",
+            window.location.pathname + window.location.search
+          );
           return;
         }
       }
       // 既に保存されている場合
-      const existing = localStorage.getItem("gmail_token");
-      setAuthStatus(!!existing);
+      getStoredToken();
     }
 
     extractAccessToken();
+
+    // 共通：Gmail API リクエスト
+    async function gmailRequest(path, options = {}) {
+      const token = getStoredToken();
+      if (!token) {
+        throw new Error(
+          "Google アカウントとまだ連携していません。「Google アカウント連携」ボタンから認可してください。"
+        );
+      }
+
+      const res = await fetch(API_BASE + path, {
+        ...options,
+        headers: {
+          Authorization: "Bearer " + token,
+          Accept: "application/json",
+          ...(options.headers || {}),
+        },
+      });
+
+      if (!res.ok) {
+        const text = await res.text();
+        throw new Error("HTTP " + res.status + " : " + text);
+      }
+
+      if (res.status === 204) {
+        return {};
+      }
+
+      return res.json();
+    }
 
     // ==========================
     // Gmail 検索ツール側の処理
@@ -783,68 +857,228 @@
       const query = buildGmailQuery();
       queryTextEl.value = query;
       if (!query) {
-        alert("検索条件が空です。送信元や件名などを入力してください。");
+        alert(
+          "検索条件が空です。送信元や件名などを入力してから「条件を作成」を押してください。"
+        );
       }
     }
 
-    // プレビュー（実際にはダミー）
-    function handlePreview() {
-      const query = queryTextEl.value.trim();
+    // プレビュー（本物の Gmail API）
+    async function handlePreview() {
+      const query = queryTextEl.value.trim() || buildGmailQuery();
       if (!query) {
-        alert("検索条件が空です。「検索条件を自動生成」を押すか、条件を入力してください。");
+        alert(
+          "検索条件が空です。「条件を作成」を押すか、条件を直接入力してください。"
+        );
         return;
       }
 
-      // 実運用では Gmail API で件数を取得
-      previewCountLabel.textContent = "対象件数: サンプルで 123 件";
+      previewCountLabel.textContent = "対象件数: 取得中...";
       previewTextEl.value =
-        "【サンプルプレビュー】\n" +
-        "検索条件: " + query + "\n\n" +
-        "実際に Gmail API をつなぐと、ここにヒットしたメールの件数や一部リストを表示できます。";
+        "Gmail API に問い合わせ中です...\n\n検索条件: " + query + "\n";
+
+      try {
+        const data = await gmailRequest(
+          "/messages?q=" + encodeURIComponent(query) + "&maxResults=50"
+        );
+
+        const count =
+          typeof data.resultSizeEstimate === "number"
+            ? data.resultSizeEstimate
+            : (data.messages || []).length;
+
+        previewCountLabel.textContent =
+          "対象件数（推定）: " + count.toString() + " 件";
+
+        previewTextEl.value =
+          "【Gmail API プレビュー】\n" +
+          "検索条件: " +
+          query +
+          "\n\n" +
+          "resultSizeEstimate: " +
+          count +
+          " 件\n" +
+          "maxResults=50 で取得した 1 ページ目のレスポンス:\n\n" +
+          JSON.stringify(data, null, 2);
+      } catch (err) {
+        console.error(err);
+        previewCountLabel.textContent = "対象件数: 取得失敗";
+        previewTextEl.value =
+          "エラーが発生しました。\n\n" + (err && err.message ? err.message : err);
+      }
     }
 
-    // 実行（いまはダミーでログだけ）
-    function handleExecute() {
-      const query = queryTextEl.value.trim();
-      const action = document.getElementById("action-select").value;
+    function buildBatchBody(action, ids) {
+      const body = {
+        ids,
+        addLabelIds: [],
+        removeLabelIds: [],
+      };
 
+      switch (action) {
+        case "trash":
+          // TRASH ラベルを付ける = ゴミ箱行き
+          body.addLabelIds.push("TRASH");
+          break;
+        case "archive":
+          // INBOX を外す = アーカイブ
+          body.removeLabelIds.push("INBOX");
+          break;
+        case "read":
+          // UNREAD を外して READ を付ける
+          body.addLabelIds.push("READ");
+          body.removeLabelIds.push("UNREAD");
+          break;
+      }
+
+      return body;
+    }
+
+    // 本番実行
+    async function handleExecute() {
+      const query = queryTextEl.value.trim() || buildGmailQuery();
       if (!query) {
-        alert("検索条件が空です。まずプレビューして内容を確認してください。");
+        alert(
+          "検索条件が空です。「条件を作成 → プレビュー」で内容を確認してから実行してください。"
+        );
         return;
       }
 
-      if (!confirm("この条件で本番実行する想定のテストメッセージを表示します。\n※ 実際の Gmail にはまだ何もしません。")) {
-        return;
-      }
+      const action = document.getElementById("action-select").value;
 
       let actionLabel = "";
       if (action === "trash") actionLabel = "ゴミ箱へ移動（削除）";
       if (action === "archive") actionLabel = "アーカイブ";
       if (action === "read") actionLabel = "既読にする";
 
-      // 実運用では users.messages.batchModify などを呼ぶ
-      resultCountLabel.textContent = "最終件数: サンプルで 123 件";
-      const now = new Date().toLocaleString("ja-JP");
-      const log =
-        "=== 実行結果（テスト） ===\n" +
-        "日時: " + now + "\n" +
-        "操作: " + actionLabel + "\n" +
-        "検索条件: " + query + "\n" +
-        "対象件数（サンプル）: 123 件\n\n" +
-        (resultTextEl.value ? resultTextEl.value + "\n\n" : "");
-      resultTextEl.value = log;
+      const ok = confirm(
+        "【超注意】この条件で Gmail に本番実行します。\n\n" +
+          "検索条件: " +
+          query +
+          "\n" +
+          "操作: " +
+          actionLabel +
+          "\n\n" +
+          "この操作は Gmail 上で取り消しできない場合があります。\n" +
+          "本当に実行してよければ [OK] を押してください。"
+      );
+      if (!ok) return;
+
+      resultTextEl.value =
+        "=== Gmail API 本番実行開始 ===\n" +
+        "検索条件: " +
+        query +
+        "\n" +
+        "操作: " +
+        actionLabel +
+        "\n\n";
+      resultCountLabel.textContent = "最終件数: 実行中...";
+
+      try {
+        // まずは条件にマッチする全メッセージ ID を取得（制限なし）
+        let allIds = [];
+        let pageToken = undefined;
+        let page = 1;
+
+        while (true) {
+          const data = await gmailRequest(
+            "/messages?q=" +
+              encodeURIComponent(query) +
+              "&maxResults=500" +
+              (pageToken ? "&pageToken=" + encodeURIComponent(pageToken) : "")
+          );
+
+          const ids = (data.messages || []).map((m) => m.id);
+          allIds = allIds.concat(ids);
+
+          resultTextEl.value +=
+            "--- list page " +
+            page +
+            " ---\n" +
+            JSON.stringify(data, null, 2) +
+            "\n\n";
+
+          if (!data.nextPageToken) break;
+          pageToken = data.nextPageToken;
+          page++;
+        }
+
+        if (allIds.length === 0) {
+          resultTextEl.value +=
+            "該当メールは 0 件でした。batchModify は実行されませんでした。\n";
+          resultCountLabel.textContent = "最終件数: 0 件";
+          return;
+        }
+
+        // 取得した ID を 1000 件ずつに分割して batchModify
+        const BATCH_SIZE = 1000;
+        let processed = 0;
+        let batchIndex = 1;
+
+        for (let i = 0; i < allIds.length; i += BATCH_SIZE) {
+          const batchIds = allIds.slice(i, i + BATCH_SIZE);
+          const body = buildBatchBody(action, batchIds);
+
+          const res = await gmailRequest("/messages/batchModify", {
+            method: "POST",
+            headers: {
+              "Content-Type": "application/json",
+            },
+            body: JSON.stringify(body),
+          });
+
+          processed += batchIds.length;
+
+          resultTextEl.value +=
+            "--- batchModify " +
+            batchIndex +
+            " (" +
+            batchIds.length +
+            " 件) ---\n" +
+            JSON.stringify(res, null, 2) +
+            "\n\n";
+
+          batchIndex++;
+        }
+
+        resultCountLabel.textContent =
+          "最終件数: " + processed.toString() + " 件";
+        resultTextEl.value +=
+          "=== 完了しました。処理件数: " +
+          processed.toString() +
+          " 件 ===\n";
+      } catch (err) {
+        console.error(err);
+        resultTextEl.value +=
+          "エラーが発生しました。\n\n" +
+          (err && err.message ? err.message : err) +
+          "\n";
+        resultCountLabel.textContent = "最終件数: エラー";
+      }
     }
 
     function handleClearResult() {
       resultTextEl.value = "";
-      resultCountLabel.textContent = "最終件数: - 件（サンプル）";
+      resultCountLabel.textContent = "最終件数: - 件";
     }
 
     // イベント紐づけ
-    document.getElementById("btn-generate").addEventListener("click", handleGenerateQuery);
-    document.getElementById("btn-preview").addEventListener("click", handlePreview);
-    document.getElementById("btn-execute").addEventListener("click", handleExecute);
-    document.getElementById("btn-clear-result").addEventListener("click", handleClearResult);
+    document
+      .getElementById("btn-generate")
+      .addEventListener("click", handleGenerateQuery);
+    document
+      .getElementById("btn-preview")
+      .addEventListener("click", () => {
+        handlePreview().catch((e) => console.error(e));
+      });
+    document
+      .getElementById("btn-execute")
+      .addEventListener("click", () => {
+        handleExecute().catch((e) => console.error(e));
+      });
+    document
+      .getElementById("btn-clear-result")
+      .addEventListener("click", handleClearResult);
 
     document.querySelectorAll(".preset button").forEach((btn) => {
       btn.addEventListener("click", () => {
@@ -855,4 +1089,3 @@
   </script>
 </body>
 </html>
-<!-- updated: fix redirect -->
