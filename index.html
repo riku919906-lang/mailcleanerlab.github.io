@@ -241,5 +241,70 @@ header { padding: 8px 0 16px; }
     </script>
 
   </div>
+
+<script>
+  // ====== OAuth 設定 ======
+  const CLIENT_ID = "923017588150-th43jikkldliggrt258aqg95hrk2ob73.apps.googleusercontent.com";
+  const REDIRECT_URI = "https://automaker-hub.github.io/mailcleanerlab.github.io/"; 
+  const SCOPES = "https://www.googleapis.com/auth/gmail.modify";
+
+  // ====== Google OAuth 開始 ======
+  function loginWithGoogle() {
+    const url =
+      "https://accounts.google.com/o/oauth2/v2/auth" +
+      "?client_id=" + CLIENT_ID +
+      "&redirect_uri=" + encodeURIComponent(REDIRECT_URI) +
+      "&response_type=token" +
+      "&scope=" + encodeURIComponent(SCOPES) +
+      "&include_granted_scopes=true";
+
+    window.location.href = url;
+  }
+
+  document.getElementById("oauth-btn").addEventListener("click", loginWithGoogle);
+
+  // ====== Google から返ってきたアクセストークンを取得 ======
+  function extractAccessToken() {
+    const hash = window.location.hash.substring(1);
+    const params = new URLSearchParams(hash);
+    const token = params.get("access_token");
+
+    if (token) {
+      localStorage.setItem("gmail_token", token);
+
+      // ステータス更新
+      const statusEl = document.getElementById("status-text");
+      if (statusEl) statusEl.textContent = "連携済み ✔";
+
+      console.log("Google OAuth 成功！アクセストークンを保存しました");
+    }
+  }
+
+  extractAccessToken();
+
+  // ====== Gmail API テスト（任意で実行可能） ======
+  async function testGmailAPI() {
+    const token = localStorage.getItem("gmail_token");
+    if (!token) {
+      console.log("トークンがありません。ログインしてください");
+      return;
+    }
+
+    const res = await fetch(
+      "https://gmail.googleapis.com/gmail/v1/users/me/messages?q=label:inbox",
+      {
+        headers: { Authorization: "Bearer " + token }
+      }
+    );
+
+    const data = await res.json();
+    console.log("Gmail API 結果:", data);
+  }
+
+  // 例：ページ読み込み後に自動実行したくない場合はコメントアウトしてOK
+  // testGmailAPI();
+</script>
+
+
 </body>
 </html>
