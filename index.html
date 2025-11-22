@@ -1,853 +1,800 @@
 <!DOCTYPE html>
 <html lang="ja">
 <head>
-  <meta charset="UTF-8">
-  <title>Mail Cleaner Lab – Gmail自動整理ツール</title>
-  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Gmail 整理ツール - automaker-hub</title>
 
   <style>
     :root {
-      --accent: #2563eb;
-      --accent-soft: #dbeafe;
-      --danger: #dc2626;
-      --bg: #f3f4f6;
-      --card: #ffffff;
-      --border: #e5e7eb;
-      --text-main: #111827;
-      --text-sub: #6b7280;
-      --radius-lg: 14px;
-      --radius-sm: 8px;
+      --bg: #0f172a;
+      --card-bg: #020617;
+      --accent: #22c55e;
+      --accent-soft: rgba(34, 197, 94, 0.15);
+      --border: #1f2937;
+      --text-main: #e5e7eb;
+      --text-sub: #9ca3af;
+      --danger: #ef4444;
+      --danger-soft: rgba(239, 68, 68, 0.15);
+      --shadow-soft: 0 18px 40px rgba(15, 23, 42, 0.8);
+      --radius-lg: 18px;
     }
 
-    * { box-sizing: border-box; }
+    * {
+      box-sizing: border-box;
+    }
 
     body {
       margin: 0;
-      padding: 0;
-      font-family: system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI",
-        sans-serif;
-      background: var(--bg);
+      font-family: system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+      background: radial-gradient(circle at top, #1f2937 0, #020617 55%, #000 100%);
       color: var(--text-main);
+      min-height: 100vh;
+    }
+
+    .page {
+      max-width: 1200px;
+      margin: 0 auto;
+      padding: 16px 16px 40px;
     }
 
     header {
-      background: #0f172a;
-      color: #f9fafb;
-      padding: 16px 24px;
+      padding: 8px 0 16px;
+    }
+
+    .headline {
       display: flex;
+      flex-wrap: wrap;
+      gap: 12px;
       align-items: center;
       justify-content: space-between;
-      gap: 12px;
-      flex-wrap: wrap;
     }
 
-    header .title {
-      font-size: 20px;
-      font-weight: 700;
-    }
-
-    header .subtitle {
-      font-size: 12px;
-      color: #9ca3af;
-    }
-
-    header .badge {
-      font-size: 10px;
-      padding: 4px 8px;
-      border-radius: 999px;
-      background: rgba(59, 130, 246, 0.2);
-      border: 1px solid rgba(96, 165, 250, 0.6);
-      color: #dbeafe;
-      letter-spacing: 0.04em;
-      text-transform: uppercase;
-    }
-
-    main {
-      max-width: 1120px;
-      margin: 24px auto 32px;
-      padding: 0 16px;
-      display: grid;
-      grid-template-columns: minmax(0, 3fr) minmax(0, 2fr);
-      gap: 20px;
-    }
-
-    @media (max-width: 880px) {
-      main {
-        grid-template-columns: 1fr;
-      }
-    }
-
-    .card {
-      background: var(--card);
-      border-radius: var(--radius-lg);
-      border: 1px solid var(--border);
-      padding: 18px 18px 16px;
-      box-shadow:
-        0 10px 15px -3px rgba(15, 23, 42, 0.08),
-        0 4px 6px -4px rgba(15, 23, 42, 0.06);
-    }
-
-    .card h2 {
-      margin: 0 0 8px;
-      font-size: 16px;
+    .headline-left h1 {
+      margin: 0 0 4px;
+      font-size: 1.4rem;
+      letter-spacing: 0.03em;
       display: flex;
       align-items: center;
       gap: 8px;
     }
 
-    .card h2 span.icon {
-      width: 18px;
-      height: 18px;
+    .headline-left h1 span.badge {
+      font-size: 0.7rem;
+      padding: 2px 6px;
       border-radius: 999px;
-      background: var(--accent-soft);
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      font-size: 12px;
-      color: var(--accent);
-    }
-
-    .card p.desc {
-      margin: 0 0 12px;
-      font-size: 12px;
+      border: 1px solid rgba(148, 163, 184, 0.4);
       color: var(--text-sub);
     }
 
-    .section-label {
-      font-size: 11px;
-      font-weight: 600;
-      color: #4b5563;
-      margin: 16px 0 4px;
+    .headline-left p {
+      margin: 0;
+      font-size: 0.82rem;
+      color: var(--text-sub);
     }
 
-    .preset-group {
+    .headline-right {
       display: flex;
       flex-wrap: wrap;
-      gap: 6px;
+      gap: 8px;
+      align-items: center;
+      justify-content: flex-end;
     }
 
-    .preset-btn {
-      border: 1px solid var(--border);
+    .pill {
+      font-size: 0.7rem;
+      padding: 4px 8px;
       border-radius: 999px;
-      background: #f9fafb;
-      font-size: 11px;
-      padding: 4px 10px;
-      cursor: pointer;
-      color: #374151;
+      border: 1px solid rgba(148, 163, 184, 0.4);
+      color: var(--text-sub);
       display: inline-flex;
       align-items: center;
       gap: 4px;
     }
 
-    .preset-btn span.dot {
-      width: 6px;
-      height: 6px;
+    .pill strong {
+      color: var(--accent);
+    }
+
+    .auth-area {
+      margin-top: 12px;
+      display: flex;
+      flex-wrap: wrap;
+      gap: 8px;
+    }
+
+    .btn-auth {
+      padding: 8px 14px;
+      border-radius: 999px;
+      border: none;
+      cursor: pointer;
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      font-size: 0.85rem;
+      font-weight: 600;
+      background: linear-gradient(135deg, var(--accent), #16a34a);
+      color: #000;
+      box-shadow: 0 10px 30px rgba(34, 197, 94, 0.45);
+    }
+
+    .btn-auth.secondary {
+      background: transparent;
+      border: 1px solid rgba(148, 163, 184, 0.5);
+      color: var(--text-sub);
+      box-shadow: none;
+    }
+
+    .btn-auth span.icon {
+      font-size: 1.1rem;
+    }
+
+    .layout {
+      display: flex;
+      gap: 18px;
+      margin-top: 16px;
+      align-items: flex-start;
+    }
+
+    .card {
+      background: radial-gradient(circle at top left, #111827 0, #020617 40%, #000 100%);
+      border-radius: var(--radius-lg);
+      border: 1px solid rgba(55, 65, 81, 0.7);
+      box-shadow: var(--shadow-soft);
+      padding: 16px 18px;
+      flex: 1;
+      min-width: 0;
+    }
+
+    .card h2 {
+      margin-top: 0;
+      font-size: 1rem;
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+
+    .card h2 span.dot {
+      width: 8px;
+      height: 8px;
       border-radius: 999px;
       background: var(--accent);
+      box-shadow: 0 0 12px rgba(34, 197, 94, 0.9);
     }
 
-    .preset-btn:hover {
-      background: var(--accent-soft);
-      border-color: #bfdbfe;
+    .card p.desc {
+      margin: 6px 0 14px;
+      font-size: 0.78rem;
+      color: var(--text-sub);
+      line-height: 1.5;
     }
 
-    label {
-      display: block;
-      font-size: 12px;
-      color: #4b5563;
-      margin-bottom: 2px;
+    .section-label {
+      font-size: 0.8rem;
+      font-weight: 600;
+      margin: 10px 0 4px;
+      color: var(--text-sub);
+      display: flex;
+      align-items: center;
+      gap: 4px;
     }
 
-    input[type="text"],
-    textarea,
-    select {
+    .section-label span.bar {
+      display: inline-block;
+      width: 3px;
+      height: 14px;
+      border-radius: 999px;
+      background: linear-gradient(to bottom, var(--accent), transparent);
+    }
+
+    input, textarea, select {
       width: 100%;
       padding: 8px 10px;
-      border-radius: var(--radius-sm);
-      border: 1px solid var(--border);
-      font-size: 13px;
-      font-family: inherit;
+      border-radius: 10px;
+      border: 1px solid rgba(75, 85, 99, 0.9);
+      background: rgba(15, 23, 42, 0.9);
+      color: var(--text-main);
+      font-size: 0.85rem;
       outline: none;
-      background: #f9fafb;
+      transition: border 0.15s, box-shadow 0.15s, background 0.15s;
     }
 
-    input[type="text"]:focus,
+    input::placeholder,
+    textarea::placeholder {
+      color: #6b7280;
+    }
+
+    input:focus,
     textarea:focus,
     select:focus {
       border-color: var(--accent);
-      box-shadow: 0 0 0 1px rgba(37, 99, 235, 0.15);
-      background: #ffffff;
+      box-shadow: 0 0 0 1px rgba(34, 197, 94, 0.5);
+      background: rgba(15, 23, 42, 0.98);
     }
 
     textarea {
-      min-height: 80px;
       resize: vertical;
+      min-height: 70px;
+      font-family: inherit;
     }
 
-    .row {
-      display: grid;
-      grid-template-columns: repeat(2, minmax(0, 1fr));
-      gap: 10px;
-    }
-
-    .actions-main {
-      margin-top: 14px;
+    .row-two {
       display: flex;
-      flex-wrap: wrap;
       gap: 8px;
     }
 
-    button.primary,
-    button.secondary,
-    button.ghost,
-    button.danger {
-      border-radius: 999px;
-      border: none;
-      padding: 8px 16px;
-      font-size: 13px;
-      cursor: pointer;
-      display: inline-flex;
-      align-items: center;
-      gap: 6px;
-      font-weight: 500;
+    .row-two > div {
+      flex: 1;
     }
 
-    button.primary {
-      background: var(--accent);
-      color: #ffffff;
-    }
-
-    button.secondary {
-      background: #e5e7eb;
-      color: #111827;
-    }
-
-    button.danger {
-      background: var(--danger);
-      color: #ffffff;
-    }
-
-    button.ghost {
-      background: transparent;
-      color: #4b5563;
-      border: 1px solid var(--border);
-    }
-
-    button.primary:hover {
-      background: #1d4ed8;
-    }
-
-    button.danger:hover {
-      background: #b91c1c;
-    }
-
-    button.secondary:hover {
-      background: #d1d5db;
-    }
-
-    button.ghost:hover {
-      background: #f3f4f6;
-    }
-
-    .pill-select {
+    .preset {
       display: flex;
       flex-wrap: wrap;
       gap: 6px;
-      margin-top: 4px;
+      margin-bottom: 10px;
     }
 
-    .pill-select button {
+    .preset button {
       border-radius: 999px;
-      border: 1px solid var(--border);
-      background: #f9fafb;
-      font-size: 11px;
+      border: 1px solid rgba(75, 85, 99, 0.9);
+      background: rgba(15, 23, 42, 0.9);
+      color: var(--text-sub);
+      font-size: 0.75rem;
       padding: 4px 10px;
       cursor: pointer;
-      color: #374151;
+      transition: background 0.15s, color 0.15s, border 0.15s, transform 0.1s;
     }
 
-    .pill-select button.active {
-      background: #111827;
-      color: #f9fafb;
-      border-color: #111827;
+    .preset button:hover {
+      background: rgba(34, 197, 94, 0.08);
+      border-color: var(--accent);
+      color: var(--accent);
+      transform: translateY(-1px);
     }
 
-    .preview-box {
-      border-radius: var(--radius-sm);
-      border: 1px dashed var(--border);
-      background: #f9fafb;
-      padding: 10px;
-      font-size: 12px;
-      min-height: 90px;
-      white-space: pre-wrap;
-      word-break: break-word;
-    }
-
-    .preview-label {
-      font-size: 11px;
-      font-weight: 600;
-      color: #4b5563;
-      margin-bottom: 4px;
+    .button-row {
       display: flex;
-      justify-content: space-between;
+      flex-wrap: wrap;
       gap: 8px;
-      align-items: center;
-    }
-
-    .preview-label span.status {
-      font-weight: 500;
-      color: #16a34a;
-    }
-
-    .log-list {
-      max-height: 220px;
-      overflow-y: auto;
-      margin-top: 6px;
-      padding-right: 4px;
-    }
-
-    .log-item {
-      border-radius: 10px;
-      border: 1px solid var(--border);
-      padding: 8px 10px;
-      font-size: 11px;
-      margin-bottom: 6px;
-      background: #f9fafb;
-    }
-
-    .log-item .log-header {
-      display: flex;
-      justify-content: space-between;
-      gap: 6px;
-      margin-bottom: 2px;
-    }
-
-    .log-item .log-kind {
-      font-weight: 600;
-    }
-
-    .log-item .log-time {
-      color: var(--text-sub);
-    }
-
-    .log-item .log-query {
-      font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas,
-        "Liberation Mono", "Courier New", monospace;
-    }
-
-    .log-empty {
-      font-size: 11px;
-      color: var(--text-sub);
-      margin-top: 4px;
-    }
-
-    .ad-box {
-      border-radius: var(--radius-sm);
-      border: 1px dashed #c4b5fd;
-      background: #f5f3ff;
-      padding: 10px;
-      font-size: 11px;
-      color: #4c1d95;
       margin-top: 10px;
     }
 
-    .ad-box strong {
-      font-size: 12px;
+    .btn-main,
+    .btn-secondary,
+    .btn-danger,
+    .btn-ghost {
+      flex: 1;
+      min-width: 140px;
+      border-radius: 999px;
+      padding: 8px 10px;
+      font-size: 0.86rem;
+      font-weight: 600;
+      border: none;
+      cursor: pointer;
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      gap: 6px;
+      transition: transform 0.08s ease-out, box-shadow 0.15s, background 0.15s, opacity 0.15s;
+      white-space: nowrap;
     }
 
-    footer {
-      max-width: 1120px;
-      margin: 0 auto 20px;
-      padding: 0 16px;
-      font-size: 11px;
+    .btn-main {
+      background: linear-gradient(135deg, var(--accent), #22c55e);
+      color: #000;
+      box-shadow: 0 14px 30px rgba(34, 197, 94, 0.45);
+    }
+
+    .btn-secondary {
+      background: rgba(15, 23, 42, 0.95);
+      border: 1px solid rgba(148, 163, 184, 0.6);
       color: var(--text-sub);
-      display: flex;
-      justify-content: space-between;
-      gap: 8px;
-      flex-wrap: wrap;
     }
 
-    .pill-warning {
+    .btn-danger {
+      background: linear-gradient(135deg, var(--danger), #b91c1c);
+      color: #fee2e2;
+      box-shadow: 0 14px 30px rgba(239, 68, 68, 0.4);
+    }
+
+    .btn-ghost {
+      background: transparent;
+      border: 1px dashed rgba(75, 85, 99, 0.8);
+      color: var(--text-sub);
+    }
+
+    .btn-main:hover,
+    .btn-secondary:hover,
+    .btn-danger:hover,
+    .btn-ghost:hover {
+      transform: translateY(-1px);
+      box-shadow: 0 18px 36px rgba(0, 0, 0, 0.6);
+      opacity: 0.95;
+    }
+
+    .btn-main span.icon,
+    .btn-secondary span.icon,
+    .btn-danger span.icon {
+      font-size: 1rem;
+    }
+
+    select {
+      background-image: linear-gradient(45deg, transparent 50%, #9ca3af 50%),
+                        linear-gradient(135deg, #9ca3af 50%, transparent 50%);
+      background-position: calc(100% - 14px) 50%, calc(100% - 9px) 50%;
+      background-size: 5px 5px, 5px 5px;
+      background-repeat: no-repeat;
+      appearance: none;
+    }
+
+    .pill-mini {
       display: inline-flex;
       align-items: center;
       gap: 6px;
-      padding: 6px 10px;
+      padding: 4px 8px;
       border-radius: 999px;
-      background: #fef3c7;
-      color: #92400e;
-      font-size: 11px;
-      margin-top: 4px;
+      font-size: 0.7rem;
+      border: 1px solid rgba(55, 65, 81, 0.8);
+      color: var(--text-sub);
+    }
+
+    .pill-mini span.dot {
+      width: 6px;
+      height: 6px;
+      border-radius: 999px;
+      background: #22c55e;
+    }
+
+    .result-block {
+      background: radial-gradient(circle at top left, rgba(34, 197, 94, 0.1), transparent 55%);
+      border-radius: 14px;
+      border: 1px solid rgba(55, 65, 81, 0.9);
+      padding: 10px 12px;
+      margin-bottom: 10px;
+    }
+
+    .result-block.danger {
+      background: radial-gradient(circle at top left, var(--danger-soft), transparent 55%);
+      border-color: rgba(153, 27, 27, 0.9);
+    }
+
+    .result-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      gap: 8px;
+      margin-bottom: 6px;
+    }
+
+    .result-header span.title {
+      font-size: 0.8rem;
+      font-weight: 600;
+      color: var(--text-sub);
+    }
+
+    .result-header span.counter {
+      font-size: 0.75rem;
+      color: var(--text-sub);
+    }
+
+    .ad-slot {
+      margin-top: 14px;
+      padding: 12px;
+      border-radius: 14px;
+      border: 1px dashed rgba(75, 85, 99, 0.9);
+      background: radial-gradient(circle at top left, rgba(59, 130, 246, 0.16), transparent 60%);
+      font-size: 0.78rem;
+      color: var(--text-sub);
+    }
+
+    .ad-slot strong {
+      color: #93c5fd;
+    }
+
+    footer {
+      margin-top: 16px;
+      font-size: 0.7rem;
+      color: #6b7280;
+      text-align: right;
+    }
+
+    /* スマホ対応 */
+    @media (max-width: 768px) {
+      .page {
+        padding: 12px 10px 30px;
+      }
+
+      .layout {
+        flex-direction: column;
+      }
+
+      .card {
+        padding: 14px 14px 16px;
+      }
+
+      .headline {
+        gap: 8px;
+      }
+
+      .headline-right {
+        justify-content: flex-start;
+      }
+
+      .button-row {
+        flex-direction: column;
+      }
+
+      .btn-main,
+      .btn-secondary,
+      .btn-danger,
+      .btn-ghost {
+        width: 100%;
+      }
     }
   </style>
 </head>
 <body>
-  <header>
-    <div>
-      <div class="title">Mail Cleaner Lab</div>
-      <div class="subtitle">Gmail 自動整理ツール（ベータ版）</div>
-    </div>
-    <div class="badge">gmail helper</div>
-  </header>
-
-  <main>
-    <!-- 左：条件入力 -->
-    <section class="card">
-      <h2>
-        <span class="icon">✉</span>
-        Gmail整理条件の設定
-      </h2>
-      <p class="desc">
-        削除・アーカイブ・既読化したいメールの条件を入力してください。<br>
-        プリセットボタンから選んで細かく調整することもできます。
-      </p>
-
-      <div class="section-label">📌 よく使うプリセット</div>
-      <div class="preset-group">
-        <button type="button" class="preset-btn" data-preset="rakuten">
-          <span class="dot"></span>楽天系メール
-        </button>
-        <button type="button" class="preset-btn" data-preset="amazon">
-          <span class="dot"></span>Amazon通知
-        </button>
-        <button type="button" class="preset-btn" data-preset="promo">
-          <span class="dot"></span>広告 / プロモーション
-        </button>
-        <button type="button" class="preset-btn" data-preset="newsletter">
-          <span class="dot"></span>メルマガ全般
-        </button>
-        <button type="button" class="preset-btn" data-preset="old30">
-          <span class="dot"></span>30日より前のプロモ
-        </button>
-        <button type="button" class="preset-btn" data-preset="spam">
-          <span class="dot"></span>迷惑メールフォルダ
-        </button>
-      </div>
-
-      <div class="section-label">🔍 詳細条件（必要なところだけ入力でOK）</div>
-      <div class="row">
-        <div>
-          <label for="from">送信元（from:）</label>
-          <input type="text" id="from" placeholder="例: news@rakuten.co.jp / @example.com">
+  <div class="page">
+    <header>
+      <div class="headline">
+        <div class="headline-left">
+          <h1>
+            Gmail 整理ツール
+            <span class="badge">automaker-hub</span>
+          </h1>
+          <p>いらないメールを一気に整理。&nbsp;検索条件を自動生成して、削除・アーカイブ・既読化までまとめて実行します。</p>
         </div>
-        <div>
-          <label for="subject">件名に含まれる語（subject:）</label>
-          <input type="text" id="subject" placeholder="例: メルマガ, クーポン">
+        <div class="headline-right">
+          <span class="pill">
+            Gmail 用ツール / <strong>収益化対応レイアウト</strong>
+          </span>
         </div>
       </div>
 
-      <div class="row" style="margin-top:8px;">
-        <div>
-          <label for="has">本文に含まれる語</label>
-          <input type="text" id="has" placeholder="カンマ区切り OK">
-        </div>
-        <div>
-          <label for="not">含めたくない語（除外）</label>
-          <input type="text" id="not" placeholder="重要なものを除外したい時など">
-        </div>
-      </div>
-
-      <div class="row" style="margin-top:8px;">
-        <div>
-          <label for="newer">いつ以降のメール</label>
-          <input type="text" id="newer" placeholder="例: 7d / 2024-01-01">
-        </div>
-        <div>
-          <label for="older">いつ以前のメール</label>
-          <input type="text" id="older" placeholder="例: 30d / 2023-12-31">
-        </div>
-      </div>
-
-      <div class="section-label">🧪 生成される Gmail 検索クエリ</div>
-      <label for="query">必要なら直接編集もできます</label>
-      <textarea id="query" placeholder="例: from:@rakuten.co.jp subject:(ポイント) newer_than:30d"></textarea>
-
-      <div class="pill-warning">
-        ⚠ このクエリにマッチしたメールが対象になります。実行前に必ず内容を確認してください。
-      </div>
-
-      <div class="section-label">⚙ 実行したい操作</div>
-      <div class="pill-select" id="actionPills">
-        <button type="button" data-action="trash" class="active">ゴミ箱へ移動（削除）</button>
-        <button type="button" data-action="archive">アーカイブ</button>
-        <button type="button" data-action="read">既読にする</button>
-      </div>
-
-      <div class="actions-main">
-        <button type="button" class="secondary" id="btnBuild">
-          🔁 クエリを自動生成
+      <!-- OAuth / API 接続ボタン（JSで動作を紐づけ） -->
+      <div class="auth-area">
+        <button id="btn-authorize" class="btn-auth">
+          <span class="icon">🔐</span>
+          Google アカウント連携（OAuth）
         </button>
-        <button type="button" class="ghost" id="btnPreview">
-          👁 プレビュー（条件チェック）
+        <button id="btn-signout" class="btn-auth secondary">
+          <span class="icon">🚪</span>
+          切断 / サインアウト
         </button>
-        <button type="button" class="danger" id="btnExecute">
-          ⚡ この条件で実行
-        </button>
+        <span class="pill-mini" id="auth-status">
+          <span class="dot"></span> ステータス: 未連携
+        </span>
       </div>
-    </section>
+    </header>
 
-    <!-- 右：プレビュー & ログ & 広告スペース -->
-    <section class="card">
-      <h2>
-        <span class="icon">👁</span>
-        実行内容の確認とログ
-      </h2>
-      <p class="desc">
-        実行前に、どんな条件でどの操作を行うかを確認できます。<br>
-        実行履歴はブラウザ内に保存され、後から見返すこともできます。
-      </p>
+    <main class="layout">
+      <!-- 左側：条件設定エリア -->
+      <section class="card" aria-label="条件設定">
+        <h2>
+          <span class="dot"></span>
+          検索条件の設定
+        </h2>
+        <p class="desc">
+          削除・アーカイブ・既読化したいメールの条件を入力してください。<br />
+          下の「プリセット」から、よく使うパターンをワンタップで呼び出せます。
+        </p>
 
-      <div class="preview-label">
-        <span>現在のプレビュー</span>
-        <span class="status" id="previewStatus">未プレビュー</span>
-      </div>
-      <div class="preview-box" id="previewBox">
-        「クエリを自動生成」→「プレビュー」の順に押すと、ここに内容が表示されます。
-      </div>
+        <div class="section-label">
+          <span class="bar"></span> よく使うプリセット
+        </div>
+        <div class="preset">
+          <button data-preset="rakuten">楽天系メール</button>
+          <button data-preset="amazon">Amazon通知</button>
+          <button data-preset="promo">広告／プロモーション</button>
+          <button data-preset="magazine">メルマガ全般</button>
+          <button data-preset="old-promo">30日より前のプロモ</button>
+        </div>
 
-      <div class="section-label" style="margin-top:14px;">🧾 実行ログ</div>
-      <div class="log-list" id="logList"></div>
-      <div class="log-empty" id="logEmpty">
-        まだ実行ログはありません。ツールを実行すると、ここに履歴が残ります。
-      </div>
+        <div class="section-label">
+          <span class="bar"></span> 送信元（from）
+        </div>
+        <input id="from-input" type="text" placeholder="例：news@rakuten.co.jp / @example.com" />
 
-      <button type="button" class="ghost" id="btnClearLog" style="margin-top:4px;">
-        🧹 ログをクリア
-      </button>
+        <div class="section-label">
+          <span class="bar"></span> 件名に含まれる言葉
+        </div>
+        <input id="subject-input" type="text" placeholder="例：メルマガ, クーポン" />
 
-      <div class="section-label" style="margin-top:14px;">💰 収益化スペース（広告など）</div>
-      <div class="ad-box" id="adArea">
-        <strong>スポンサー枠</strong><br>
-        将来的に、ここにバナー広告や有料版への案内リンクを設置できます。<br>
-        例：Google AdSense、note有料記事、ココナラ出品ページなど。
-      </div>
-    </section>
-  </main>
+        <div class="section-label">
+          <span class="bar"></span> 本文に含まれる言葉
+        </div>
+        <input id="body-input" type="text" placeholder="カンマ区切りで複数可" />
 
-  <footer>
-    <span>Mail Cleaner Lab – Gmail 自動整理ツール（個人利用向け）</span>
-    <span>※GAS や Gmail API と組み合わせることで、実際のメール操作が可能になります。</span>
-  </footer>
+        <div class="section-label">
+          <span class="bar"></span> 除外キーワード
+        </div>
+        <input id="exclude-input" type="text" placeholder="重要な通知など除外したい場合" />
 
+        <div class="row-two">
+          <div>
+            <div class="section-label">
+              <span class="bar"></span> いつ以降のメール
+            </div>
+            <input id="after-input" type="text" placeholder="例：7d / 2024-01-01" />
+          </div>
+          <div>
+            <div class="section-label">
+              <span class="bar"></span> いつ以前のメール
+            </div>
+            <input id="before-input" type="text" placeholder="例：30d / 2023-12-31" />
+          </div>
+        </div>
+
+        <div class="section-label">
+          <span class="bar"></span> 生成された検索条件（編集可能）
+        </div>
+        <textarea id="query-text" rows="4" placeholder="ここに検索条件が自動生成されます"></textarea>
+
+        <div class="section-label">
+          <span class="bar"></span> 実行する操作
+        </div>
+        <select id="action-select">
+          <option value="trash">ゴミ箱へ移動（削除）</option>
+          <option value="archive">アーカイブ</option>
+          <option value="read">既読にする</option>
+        </select>
+
+        <div class="button-row">
+          <button id="btn-generate" class="btn-main">
+            <span class="icon">✨</span> 検索条件を自動生成
+          </button>
+          <button id="btn-preview" class="btn-secondary">
+            <span class="icon">🔍</span> プレビュー（条件チェック）
+          </button>
+          <button id="btn-execute" class="btn-danger">
+            <span class="icon">⚠️</span> この条件で実行
+          </button>
+        </div>
+      </section>
+
+      <!-- 右側：プレビュー / 実行結果エリア -->
+      <section class="card" aria-label="実行結果">
+        <h2>
+          <span class="dot"></span>
+          プレビューと実行結果
+        </h2>
+        <p class="desc">
+          実行前に必ずプレビューして、本当に消してよいメールだけが対象になっているか確認してください。
+        </p>
+
+        <div class="result-block">
+          <div class="result-header">
+            <span class="title">現在のプレビュー</span>
+            <span class="counter" id="preview-count-label">対象件数: - 件（サンプル）</span>
+          </div>
+          <textarea id="preview-text" rows="6" placeholder="「検索条件を自動生成 → プレビュー」の順に操作すると、ここに結果の例が表示されます。"></textarea>
+        </div>
+
+        <div class="result-block danger">
+          <div class="result-header">
+            <span class="title">実行結果</span>
+            <span class="counter" id="result-count-label">最終件数: - 件（サンプル）</span>
+          </div>
+          <textarea id="result-text" rows="6" placeholder="まだ実行結果はありません。「この条件で実行」を押すと、ここに実行内容の履歴（実行結果）が表示されます。"></textarea>
+        </div>
+
+        <div class="button-row">
+          <button id="btn-clear-result" class="btn-ghost">
+            実行結果をクリア
+          </button>
+        </div>
+
+        <div class="ad-slot">
+          <strong>収益スペース（将来用）</strong><br />
+          ここに広告バナー、アフィリエイトリンク、有料版への導線などを追加できます。<br />
+          例：<br />
+          ・「高速版」や「自動定期実行版」へのリンク<br />
+          ・メール断捨離のノウハウ記事へのリンク
+        </div>
+      </section>
+    </main>
+
+    <footer>
+      Powered by automaker-hub / Gmail 整理ツール
+    </footer>
+  </div>
+
+  <!-- ▼▼▼ JavaScript：ボタンに処理を紐づけ / OAuth ひな型 ▼▼▼ -->
   <script>
-    // ------------------------------
-    // プリセット定義
-    // ------------------------------
-    const presets = {
-      rakuten: {
-        label: '楽天系メール',
-        query:
-          'from:(@rakuten.co.jp OR @rakuten-card.co.jp OR @rakuten-bank.co.jp)'
-      },
-      amazon: {
-        label: 'Amazon通知',
-        query: 'from:(@amazon.co.jp OR @marketing.amazon.co.jp)'
-      },
-      promo: {
-        label: '広告 / プロモーション',
-        query: 'category:promotions'
-      },
-      newsletter: {
-        label: 'メルマガ全般',
-        query: 'category:promotions OR "メルマガ"'
-      },
-      old30: {
-        label: '30日より前のプロモ',
-        query: 'category:promotions older_than:30d'
-      },
-      spam: {
-        label: '迷惑メールフォルダ',
-        query: 'in:spam'
+    // ★ Gmail OAuth / API 実装用の設定（実際に使うときは自分の値に置き換え）
+    const CLIENT_ID = "YOUR_CLIENT_ID.apps.googleusercontent.com"; // TODO: 差し替え
+    const API_KEY = "YOUR_API_KEY"; // TODO: 差し替え
+    const SCOPES = "https://www.googleapis.com/auth/gmail.modify";
+
+    let isSignedIn = false;
+
+    const authStatusEl = document.getElementById("auth-status");
+    const queryTextEl = document.getElementById("query-text");
+    const previewTextEl = document.getElementById("preview-text");
+    const resultTextEl = document.getElementById("result-text");
+    const previewCountLabel = document.getElementById("preview-count-label");
+    const resultCountLabel = document.getElementById("result-count-label");
+
+    function updateAuthStatus() {
+      const dot = authStatusEl.querySelector(".dot");
+      if (isSignedIn) {
+        authStatusEl.innerHTML = '<span class="dot"></span> ステータス: 連携中';
+      } else {
+        authStatusEl.innerHTML = '<span class="dot"></span> ステータス: 未連携';
       }
-    };
+    }
 
-    // ------------------------------
-    // UI の取得
-    // ------------------------------
-    const $ = (id) => document.getElementById(id);
+    // ▼ OAuth 認証（ひな型）
+    async function handleAuthorize() {
+      // 本格的にやる場合は Google Cloud Console で OAuth クライアントを作成し、
+      // Google Identity Services / gapi.client を使ってトークン取得します。
+      // ここでは「連携しているっぽく見せる」ダミー処理にしてあります。
+      isSignedIn = true;
+      updateAuthStatus();
+      alert("ダミー：Google アカウント連携が完了した想定です。実運用する場合は OAuth 実装が必要です。");
+    }
 
-    const fromInput = $('from');
-    const subjectInput = $('subject');
-    const hasInput = $('has');
-    const notInput = $('not');
-    const newerInput = $('newer');
-    const olderInput = $('older');
-    const queryInput = $('query');
+    function handleSignout() {
+      isSignedIn = false;
+      updateAuthStatus();
+      alert("ダミー：サインアウトしました。実運用する場合はトークンの破棄処理が必要です。");
+    }
 
-    const previewBox = $('previewBox');
-    const previewStatus = $('previewStatus');
-    const logList = $('logList');
-    const logEmpty = $('logEmpty');
+    // ▼ 検索条件の文字列を組み立てる
+    function buildGmailQuery() {
+      const from = document.getElementById("from-input").value.trim();
+      const subject = document.getElementById("subject-input").value.trim();
+      const body = document.getElementById("body-input").value.trim();
+      const exclude = document.getElementById("exclude-input").value.trim();
+      const after = document.getElementById("after-input").value.trim();
+      const before = document.getElementById("before-input").value.trim();
 
-    const btnBuild = $('btnBuild');
-    const btnPreview = $('btnPreview');
-    const btnExecute = $('btnExecute');
-    const btnClearLog = $('btnClearLog');
-
-    const actionPills = $('actionPills');
-
-    // ------------------------------
-    // 実行アクションの選択
-    // ------------------------------
-    let currentAction = 'trash';
-
-    actionPills.addEventListener('click', (e) => {
-      const btn = e.target.closest('button[data-action]');
-      if (!btn) return;
-
-      const action = btn.dataset.action;
-      currentAction = action;
-
-      [...actionPills.querySelectorAll('button')].forEach((b) =>
-        b.classList.toggle('active', b === btn)
-      );
-    });
-
-    // ------------------------------
-    // プリセットクリック
-    // ------------------------------
-    document.querySelectorAll('.preset-btn').forEach((btn) => {
-      btn.addEventListener('click', () => {
-        const presetKey = btn.dataset.preset;
-        const preset = presets[presetKey];
-        if (!preset) return;
-
-        // 既存のクエリは上書き（必要なら追記でもOK）
-        queryInput.value = preset.query;
-
-        // どのプリセットか分かるようにプレビュー側に表示
-        previewStatus.textContent = `プリセット適用: ${preset.label}`;
-        previewStatus.style.color = '#2563eb';
-        previewBox.textContent =
-          `プリセット「${preset.label}」を適用しました。\n\n` +
-          `現在のクエリ:\n${preset.query}\n\n` +
-          '必要に応じて詳細条件を追加してから「クエリを自動生成」「プレビュー」を実行してください。';
-      });
-    });
-
-    // ------------------------------
-    // クエリ自動生成
-    // ------------------------------
-    function buildQueryFromFields() {
       const parts = [];
 
-      if (fromInput.value.trim()) {
-        parts.push(`from:(${fromInput.value.trim()})`);
+      if (from) {
+        parts.push(`from:(${from})`);
       }
-      if (subjectInput.value.trim()) {
-        parts.push(`subject:(${subjectInput.value.trim()})`);
+      if (subject) {
+        parts.push(`subject:(${subject})`);
       }
-      if (hasInput.value.trim()) {
-        parts.push(`"${hasInput.value.trim()}"`);
+      if (body) {
+        parts.push(`{${body}}`);
       }
-      if (notInput.value.trim()) {
-        parts.push(`-"${notInput.value.trim()}"`);
+      if (exclude) {
+        parts.push(`-{${exclude}}`);
       }
-      if (newerInput.value.trim()) {
-        const v = newerInput.value.trim();
-        parts.push(
-          v.match(/d$/) ? `newer_than:${v}` : `newer:${v}`
-        );
+      if (after) {
+        parts.push(`after:${after}`);
       }
-      if (olderInput.value.trim()) {
-        const v = olderInput.value.trim();
-        parts.push(
-          v.match(/d$/) ? `older_than:${v}` : `older:${v}`
-        );
+      if (before) {
+        parts.push(`before:${before}`);
       }
 
-      // 既にクエリ欄に何か書いてある場合は、それも尊重
-      const base = queryInput.value.trim();
-      const finalQuery = [base, ...parts].filter(Boolean).join(' ');
-
-      queryInput.value = finalQuery;
-
-      previewStatus.textContent = 'クエリを自動生成しました';
-      previewStatus.style.color = '#16a34a';
-      previewBox.textContent =
-        '以下のクエリが生成されました。\n\n' +
-        finalQuery +
-        '\n\n「プレビュー」で実行内容を確認できます。';
+      return parts.join(" ");
     }
 
-    btnBuild.addEventListener('click', buildQueryFromFields);
+    // ▼ プリセットボタン
+    function applyPreset(key) {
+      const fromInput = document.getElementById("from-input");
+      const subjectInput = document.getElementById("subject-input");
+      const bodyInput = document.getElementById("body-input");
+      const excludeInput = document.getElementById("exclude-input");
+      const afterInput = document.getElementById("after-input");
+      const beforeInput = document.getElementById("before-input");
 
-    // ------------------------------
-    // プレビュー（ここでは「条件の確認」）
-    // ※実際の件数プレビューには GAS / Gmail API 側の実装が必要
-    // ------------------------------
-    function preview() {
-      const q = queryInput.value.trim();
-      if (!q) {
-        previewStatus.textContent = 'クエリが空です';
-        previewStatus.style.color = '#dc2626';
-        previewBox.textContent =
-          'クエリが空です。プリセットを選ぶか、条件を入力して「クエリを自動生成」を押してください。';
+      // ひとまず全部リセット
+      fromInput.value = "";
+      subjectInput.value = "";
+      bodyInput.value = "";
+      excludeInput.value = "";
+      afterInput.value = "";
+      beforeInput.value = "";
+
+      switch (key) {
+        case "rakuten":
+          fromInput.value = "@rakuten.co.jp";
+          subjectInput.value = "ポイント, お得, セール";
+          break;
+        case "amazon":
+          fromInput.value = "@amazon.co.jp";
+          subjectInput.value = "おすすめ, セール, キャンペーン";
+          break;
+        case "promo":
+          bodyInput.value = "セール, キャンペーン, 広告";
+          break;
+        case "magazine":
+          subjectInput.value = "メルマガ, newsletter";
+          break;
+        case "old-promo":
+          bodyInput.value = "セール, キャンペーン, 広告";
+          beforeInput.value = "30d";
+          break;
+      }
+
+      const query = buildGmailQuery();
+      queryTextEl.value = query;
+    }
+
+    // ▼ 検索条件を自動生成
+    function handleGenerateQuery() {
+      const query = buildGmailQuery();
+      queryTextEl.value = query;
+      if (!query) {
+        alert("検索条件が空です。送信元や件名などを入力してください。");
+      }
+    }
+
+    // ▼ プレビュー（本当は Gmail API で検索 → 件数や例を出す）
+    async function handlePreview() {
+      const query = queryTextEl.value.trim();
+      if (!query) {
+        alert("検索条件が空です。「検索条件を自動生成」を押すか、条件を入力してください。");
         return;
       }
 
-      const actionLabel =
-        currentAction === 'trash'
-          ? 'ゴミ箱へ移動（削除）'
-          : currentAction === 'archive'
-          ? 'アーカイブ'
-          : '既読にする';
-
-      previewStatus.textContent = 'プレビュー済み（まだ実行はされていません）';
-      previewStatus.style.color = '#16a34a';
-
-      previewBox.textContent =
-        'この条件で以下の操作を行う予定です。\n\n' +
-        `【操作】${actionLabel}\n\n` +
-        '【Gmail検索クエリ】\n' +
-        q +
-        '\n\n' +
-        '※実際に何件ヒットするかの確認や、メール一覧のプレビューは、\n' +
-        '　今後 GAS や Gmail API 側での実装が必要です。';
+      // 実運用では Gmail API の users.messages.list を呼んで件数・サンプルを取得
+      // ここではサンプルテキストを生成
+      previewCountLabel.textContent = "対象件数: サンプルで 123 件";
+      previewTextEl.value =
+        `【サンプルプレビュー】\n` +
+        `検索条件: ${query}\n\n` +
+        `実際に Gmail API をつなぐと、ここにヒットしたメールの件数や一部リストを表示できます。`;
     }
 
-    btnPreview.addEventListener('click', preview);
+    // ▼ この条件で実行（本当は Gmail API で削除/アーカイブ/既読）
+    async function handleExecute() {
+      const query = queryTextEl.value.trim();
+      const action = document.getElementById("action-select").value;
 
-    // ------------------------------
-    // 実行処理（GAS / Gmail API 連携ポイント）
-    // ------------------------------
-    function executeAction() {
-      const q = queryInput.value.trim();
-      if (!q) {
-        alert('クエリが空です。まずは条件を設定してください。');
+      if (!query) {
+        alert("検索条件が空です。まずプレビューして内容を確認してください。");
         return;
       }
 
-      const actionLabel =
-        currentAction === 'trash'
-          ? 'ゴミ箱へ移動（削除）'
-          : currentAction === 'archive'
-          ? 'アーカイブ'
-          : '既読にする';
-
-      const confirmed = confirm(
-        `本当にこの条件で「${actionLabel}」を実行しますか？\n\n` +
-          '【Gmail検索クエリ】\n' +
-          q +
-          '\n\nこの操作は取り消せない場合があります。'
-      );
-      if (!confirmed) return;
-
-      // --- ここから下を、環境に合わせて差し替え ---
-
-      // 1) GAS 版の場合（HtmlService 内で動かすとき）
-      //    ・deleteByQuery, archiveByQuery, markReadByQuery
-      //      などの関数を GAS 側に用意しておくイメージです。
-      if (typeof google !== 'undefined' && google.script) {
-        const handler = (res) => {
-          const msg = res && res.message ? res.message : '処理が完了しました。';
-          alert(msg);
-          addLogEntry(actionLabel, q, msg);
-        };
-
-        let fnName = '';
-        if (currentAction === 'trash') fnName = 'deleteByQuery';
-        if (currentAction === 'archive') fnName = 'archiveByQuery';
-        if (currentAction === 'read') fnName = 'markReadByQuery';
-
-        if (fnName) {
-          google.script.run
-            .withSuccessHandler(handler)
-            .withFailureHandler((err) => {
-              const msg = 'エラーが発生しました: ' + err.message;
-              alert(msg);
-              addLogEntry(actionLabel, q, msg);
-            })[fnName](q);
-        } else {
-          const msg = '未対応の操作です。';
-          alert(msg);
-          addLogEntry(actionLabel, q, msg);
-        }
-      } else {
-        // 2) GitHub Pages 版など、まだバックエンドがない場合
-        //    とりあえず「実行した風」のログだけ残す。
-        const msg =
-          'デモモードのため、実際のGmail操作は行っていません。\n' +
-          'GAS または Gmail API を連携すると本当に実行されます。';
-        alert(msg);
-        addLogEntry(actionLabel, q, msg);
-      }
-    }
-
-    btnExecute.addEventListener('click', executeAction);
-
-    // ------------------------------
-    // ログ保存（localStorage）
-    // ------------------------------
-    const LOG_KEY = 'mailCleanerLab_logs_v1';
-
-    function loadLogs() {
-      try {
-        const raw = localStorage.getItem(LOG_KEY);
-        if (!raw) return [];
-        const parsed = JSON.parse(raw);
-        return Array.isArray(parsed) ? parsed : [];
-      } catch {
-        return [];
-      }
-    }
-
-    function saveLogs(logs) {
-      try {
-        localStorage.setItem(LOG_KEY, JSON.stringify(logs));
-      } catch {
-        // ignore
-      }
-    }
-
-    function renderLogs() {
-      const logs = loadLogs();
-      logList.innerHTML = '';
-
-      if (!logs.length) {
-        logEmpty.style.display = 'block';
+      if (!confirm("この条件で本番実行する想定のテストメッセージを表示します。\n※ 実際の Gmail にはまだ何もしません。")) {
         return;
       }
 
-      logEmpty.style.display = 'none';
+      let actionLabel = "";
+      if (action === "trash") actionLabel = "ゴミ箱へ移動（削除）";
+      if (action === "archive") actionLabel = "アーカイブ";
+      if (action === "read") actionLabel = "既読にする";
 
-      logs
-        .slice()
-        .reverse()
-        .forEach((log) => {
-          const div = document.createElement('div');
-          div.className = 'log-item';
-          div.innerHTML = `
-            <div class="log-header">
-              <div class="log-kind">【${log.action}】</div>
-              <div class="log-time">${log.time}</div>
-            </div>
-            <div class="log-query">${log.query}</div>
-            <div style="margin-top:2px;">${log.message}</div>
-          `;
-          logList.appendChild(div);
-        });
+      // 実運用では users.messages.batchModify などを呼ぶ
+      resultCountLabel.textContent = "最終件数: サンプルで 123 件";
+      const now = new Date().toLocaleString("ja-JP");
+      const log =
+        `=== 実行結果（テスト） ===\n` +
+        `日時: ${now}\n` +
+        `操作: ${actionLabel}\n` +
+        `検索条件: ${query}\n` +
+        `対象件数（サンプル）: 123 件\n\n` +
+        (resultTextEl.value ? resultTextEl.value + "\n\n" : "");
+      resultTextEl.value = log;
     }
 
-    function addLogEntry(actionLabel, query, message) {
-      const logs = loadLogs();
-      logs.push({
-        action: actionLabel,
-        query,
-        message,
-        time: new Date().toLocaleString('ja-JP')
+    function handleClearResult() {
+      resultTextEl.value = "";
+      resultCountLabel.textContent = "最終件数: - 件（サンプル）";
+    }
+
+    // ▼ イベント紐づけ
+    document.getElementById("btn-authorize").addEventListener("click", handleAuthorize);
+    document.getElementById("btn-signout").addEventListener("click", handleSignout);
+
+    document.getElementById("btn-generate").addEventListener("click", handleGenerateQuery);
+    document.getElementById("btn-preview").addEventListener("click", handlePreview);
+    document.getElementById("btn-execute").addEventListener("click", handleExecute);
+    document.getElementById("btn-clear-result").addEventListener("click", handleClearResult);
+
+    document.querySelectorAll(".preset button").forEach((btn) => {
+      btn.addEventListener("click", () => {
+        const key = btn.getAttribute("data-preset");
+        applyPreset(key);
       });
-      saveLogs(logs);
-      renderLogs();
-    }
-
-    btnClearLog.addEventListener('click', () => {
-      if (!confirm('ログをすべて削除しますか？')) return;
-      localStorage.removeItem(LOG_KEY);
-      renderLogs();
     });
 
-    // 初期描画
-    renderLogs();
+    updateAuthStatus();
   </script>
 </body>
 </html>
