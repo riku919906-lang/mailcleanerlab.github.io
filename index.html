@@ -223,11 +223,23 @@ header { padding: 8px 0 16px; }
       </div>
 
       <!-- OAuth ボタン -->
-      <div class="auth-area">
-        <button id="btn-authorize" class="btn-auth"><span class="icon">🔐</span>Google アカウント連携（OAuth）</button>
-        <button id="btn-signout" class="btn-auth secondary"><span class="icon">🚪</span>切断 / サインアウト</button>
-        <span class="pill-mini" id="auth-status"><span class="dot"></span> ステータス: 未連携</span>
-      </div>
+     
+<div class="auth-area">
+  <button id="oauth-btn" class="btn-auth">
+    <span class="icon">🔐</span>
+    Google アカウント連携（OAuth）
+  </button>
+
+  <button id="btn-signout" class="btn-auth secondary">
+    <span class="icon">🚪</span>
+    切断 / サインアウト
+  </button>
+
+  <span class="pill-mini" id="auth-status">
+    <span class="dot"></span> ステータス: 未連携
+  </span>
+</div>
+
 
     </header>
 
@@ -245,7 +257,7 @@ header { padding: 8px 0 16px; }
 <script>
   // ====== OAuth 設定 ======
   const CLIENT_ID = "923017588150-th43jikkldliggrt258aqg95hrk2ob73.apps.googleusercontent.com";
-  const REDIRECT_URI = "https://automaker-hub.github.io/mailcleanerlab.github.io/"; 
+  const REDIRECT_URI = "https://automaker-hub.github.io/mailcleanerlab.github.io/";
   const SCOPES = "https://www.googleapis.com/auth/gmail.modify";
 
   // ====== Google OAuth 開始 ======
@@ -256,7 +268,8 @@ header { padding: 8px 0 16px; }
       "&redirect_uri=" + encodeURIComponent(REDIRECT_URI) +
       "&response_type=token" +
       "&scope=" + encodeURIComponent(SCOPES) +
-      "&include_granted_scopes=true";
+      "&include_granted_scopes=true" +
+      "&prompt=consent";  // 毎回確実に同意画面を出す
 
     window.location.href = url;
   }
@@ -272,9 +285,9 @@ header { padding: 8px 0 16px; }
     if (token) {
       localStorage.setItem("gmail_token", token);
 
-      // ステータス更新
-      const statusEl = document.getElementById("status-text");
-      if (statusEl) statusEl.textContent = "連携済み ✔";
+      // ステータス表示
+      document.getElementById("auth-status").innerHTML =
+        '<span class="dot"></span> ステータス: 連携済み ✔';
 
       console.log("Google OAuth 成功！アクセストークンを保存しました");
     }
@@ -282,28 +295,16 @@ header { padding: 8px 0 16px; }
 
   extractAccessToken();
 
-  // ====== Gmail API テスト（任意で実行可能） ======
-  async function testGmailAPI() {
-    const token = localStorage.getItem("gmail_token");
-    if (!token) {
-      console.log("トークンがありません。ログインしてください");
-      return;
-    }
+  // ====== サインアウト ======
+  document.getElementById("btn-signout").addEventListener("click", () => {
+    localStorage.removeItem("gmail_token");
+    document.getElementById("auth-status").innerHTML =
+      '<span class="dot"></span> ステータス: 未連携';
+    alert("サインアウトしました");
+  });
 
-    const res = await fetch(
-      "https://gmail.googleapis.com/gmail/v1/users/me/messages?q=label:inbox",
-      {
-        headers: { Authorization: "Bearer " + token }
-      }
-    );
-
-    const data = await res.json();
-    console.log("Gmail API 結果:", data);
-  }
-
-  // 例：ページ読み込み後に自動実行したくない場合はコメントアウトしてOK
-  // testGmailAPI();
 </script>
+
 
 
 </body>
