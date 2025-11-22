@@ -5,6 +5,10 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>Mail Cleaner Lab – Gmail 整理ツール | automaker-hub</title>
 
+  <!-- AdSense（自分の client ID のまま） -->
+  <script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-2398505946967311"
+    crossorigin="anonymous"></script>
+
   <style>
     /* ===================== */
     /*   基本テーマ          */
@@ -56,27 +60,24 @@
       justify-content: space-between;
     }
 
-    .headline-left h1 {
-      margin: 0 0 4px;
-      font-size: 1.4rem;
-      letter-spacing: 0.03em;
+    .headline-left {
       display: flex;
-      align-items: center;
-      gap: 8px;
+      flex-direction: column;
+      gap: 6px;
     }
 
-    .headline-left h1 .badge {
-      font-size: 0.7rem;
-      padding: 2px 6px;
-      border-radius: 999px;
-      border: 1px solid rgba(148, 163, 184, 0.4);
-      color: var(--text-sub);
-    }
-
-    .headline-left p {
+    .app-title {
       margin: 0;
-      font-size: 0.82rem;
+      font-size: 1.6rem;
+      letter-spacing: 0.04em;
+      font-weight: 700;
+    }
+
+    .app-subtitle {
+      margin: 0;
+      font-size: 0.9rem;
       color: var(--text-sub);
+      line-height: 1.6;
     }
 
     .headline-right {
@@ -84,21 +85,6 @@
       flex-wrap: wrap;
       gap: 8px;
       align-items: center;
-    }
-
-    .pill {
-      font-size: 0.7rem;
-      padding: 4px 8px;
-      border-radius: 999px;
-      border: 1px solid rgba(148, 163, 184, 0.4);
-      color: var(--text-sub);
-      display: inline-flex;
-      align-items: center;
-      gap: 4px;
-    }
-
-    .pill strong {
-      color: var(--accent);
     }
 
     /* 問い合わせボタン */
@@ -113,6 +99,7 @@
       transition: 0.2s;
       display: inline-flex;
       align-items: center;
+      white-space: nowrap;
     }
 
     .btn-contact:hover {
@@ -164,6 +151,7 @@
       font-size: 0.7rem;
       border: 1px solid rgba(55, 65, 81, 0.8);
       color: var(--text-sub);
+      white-space: nowrap;
     }
 
     .pill-mini .dot {
@@ -446,20 +434,34 @@
         padding: 12px 10px 30px;
       }
 
+      .headline {
+        align-items: flex-start;
+      }
+
+      .app-title {
+        font-size: 1.35rem;
+      }
+
+      .app-subtitle {
+        font-size: 0.82rem;
+      }
+
+      .headline-right {
+        width: 100%;
+        justify-content: flex-start;
+      }
+
+      .auth-area {
+        flex-direction: column;
+        align-items: flex-start;
+      }
+
       .layout {
         flex-direction: column;
       }
 
       .card {
         padding: 14px 14px 16px;
-      }
-
-      .headline {
-        gap: 8px;
-      }
-
-      .headline-right {
-        justify-content: flex-start;
       }
 
       .button-row {
@@ -480,16 +482,12 @@
     <header>
       <div class="headline">
         <div class="headline-left">
-          <h1>
-            Gmail 整理ツール
-            <span class="badge">Mail Cleaner Lab / automaker-hub</span>
-          </h1>
-          <p>いらないメールを一気に整理。検索条件を自動生成して、削除・アーカイブ・既読化までまとめて実行します。</p>
+          <h1 class="app-title">Gmail 整理ツール</h1>
+          <p class="app-subtitle">
+            いらないメールを一気に整理。検索条件を自動生成して、削除・アーカイブ・既読化までまとめて実行します。
+          </p>
         </div>
         <div class="headline-right">
-          <span class="pill">
-            Gmail 用ツール / <strong>収益化対応レイアウト</strong>
-          </span>
           <a href="contact.html" class="btn-contact">お問い合わせ</a>
         </div>
       </div>
