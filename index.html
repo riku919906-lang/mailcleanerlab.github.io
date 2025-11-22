@@ -6,8 +6,9 @@
   <title>Gmail 整理ツール - automaker-hub</title>
 
   <style>
-
-
+/* ===================== */
+/*   問い合わせボタン   */
+/* ===================== */
 .btn-contact {
   padding: 8px 14px;
   background: rgba(30, 31, 41, 0.9);
@@ -20,812 +21,225 @@
   display: inline-flex;
   align-items: center;
 }
-
 .btn-contact:hover {
   background: rgba(46, 47, 56, 0.9);
   border-color: #4b4c58;
 }
 
+/* ===================== */
+/*   既存デザイン        */
+/* ===================== */
 
-    :root {
-      --bg: #0f172a;
-      --card-bg: #020617;
-      --accent: #22c55e;
-      --accent-soft: rgba(34, 197, 94, 0.15);
-      --border: #1f2937;
-      --text-main: #e5e7eb;
-      --text-sub: #9ca3af;
-      --danger: #ef4444;
-      --danger-soft: rgba(239, 68, 68, 0.15);
-      --shadow-soft: 0 18px 40px rgba(15, 23, 42, 0.8);
-      --radius-lg: 18px;
-    }
+:root {
+  --bg: #0f172a;
+  --card-bg: #020617;
+  --accent: #22c55e;
+  --accent-soft: rgba(34, 197, 94, 0.15);
+  --border: #1f2937;
+  --text-main: #e5e7eb;
+  --text-sub: #9ca3af;
+  --danger: #ef4444;
+  --danger-soft: rgba(239, 68, 68, 0.15);
+  --shadow-soft: 0 18px 40px rgba(15, 23, 42, 0.8);
+  --radius-lg: 18px;
+}
 
-    * {
-      box-sizing: border-box;
-    }
+* { box-sizing: border-box; }
 
-    body {
-      margin: 0;
-      font-family: system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
-      background: radial-gradient(circle at top, #1f2937 0, #020617 55%, #000 100%);
-      color: var(--text-main);
-      min-height: 100vh;
-    }
+body {
+  margin: 0;
+  font-family: system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+  background: radial-gradient(circle at top, #1f2937 0, #020617 55%, #000 100%);
+  color: var(--text-main);
+  min-height: 100vh;
+}
 
-    .page {
-      max-width: 1200px;
-      margin: 0 auto;
-      padding: 16px 16px 40px;
-    }
+.page {
+  max-width: 1200px;
+  margin: 0 auto;
+  padding: 16px 16px 40px;
+}
 
-    header {
-      padding: 8px 0 16px;
-    }
+header { padding: 8px 0 16px; }
 
-    .headline {
-      display: flex;
-      flex-wrap: wrap;
-      gap: 12px;
-      align-items: center;
-      justify-content: space-between;
-    }
+.headline {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 12px;
+  align-items: center;
+  justify-content: space-between;
+}
 
-    .headline-left h1 {
-      margin: 0 0 4px;
-      font-size: 1.4rem;
-      letter-spacing: 0.03em;
-      display: flex;
-      align-items: center;
-      gap: 8px;
-    }
+.headline-left h1 {
+  margin: 0 0 4px;
+  font-size: 1.4rem;
+  letter-spacing: 0.03em;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
 
-    .headline-left h1 span.badge {
-      font-size: 0.7rem;
-      padding: 2px 6px;
-      border-radius: 999px;
-      border: 1px solid rgba(148, 163, 184, 0.4);
-      color: var(--text-sub);
-    }
+.headline-left h1 span.badge {
+  font-size: 0.7rem;
+  padding: 2px 6px;
+  border-radius: 999px;
+  border: 1px solid rgba(148, 163, 184, 0.4);
+  color: var(--text-sub);
+}
 
-    .headline-left p {
-      margin: 0;
-      font-size: 0.82rem;
-      color: var(--text-sub);
-    }
+.headline-left p {
+  margin: 0;
+  font-size: 0.82rem;
+  color: var(--text-sub);
+}
 
-    .headline-right {
-      display: flex;
-      flex-wrap: wrap;
-      gap: 8px;
-      align-items: center;
-      justify-content: flex-end;
-    }
+.headline-right {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+  align-items: center;
+}
 
-    .pill {
-      font-size: 0.7rem;
-      padding: 4px 8px;
-      border-radius: 999px;
-      border: 1px solid rgba(148, 163, 184, 0.4);
-      color: var(--text-sub);
-      display: inline-flex;
-      align-items: center;
-      gap: 4px;
-    }
+/* ここに問い合わせボタンが入る！ */
 
-    .pill strong {
-      color: var(--accent);
-    }
+.pill {
+  font-size: 0.7rem;
+  padding: 4px 8px;
+  border-radius: 999px;
+  border: 1px solid rgba(148, 163, 184, 0.4);
+  color: var(--text-sub);
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+}
 
-    .auth-area {
-      margin-top: 12px;
-      display: flex;
-      flex-wrap: wrap;
-      gap: 8px;
-    }
+.pill strong { color: var(--accent); }
 
-    .btn-auth {
-      padding: 8px 14px;
-      border-radius: 999px;
-      border: none;
-      cursor: pointer;
-      display: inline-flex;
-      align-items: center;
-      gap: 6px;
-      font-size: 0.85rem;
-      font-weight: 600;
-      background: linear-gradient(135deg, var(--accent), #16a34a);
-      color: #000;
-      box-shadow: 0 10px 30px rgba(34, 197, 94, 0.45);
-    }
+.auth-area {
+  margin-top: 12px;
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+}
 
-    .btn-auth.secondary {
-      background: transparent;
-      border: 1px solid rgba(148, 163, 184, 0.5);
-      color: var(--text-sub);
-      box-shadow: none;
-    }
+.btn-auth {
+  padding: 8px 14px;
+  border-radius: 999px;
+  border: none;
+  cursor: pointer;
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  font-size: 0.85rem;
+  font-weight: 600;
+  background: linear-gradient(135deg, var(--accent), #16a34a);
+  color: #000;
+  box-shadow: 0 10px 30px rgba(34, 197, 94, 0.45);
+}
+.btn-auth.secondary {
+  background: transparent;
+  border: 1px solid rgba(148, 163, 184, 0.5);
+  color: var(--text-sub);
+}
 
-    .btn-auth span.icon {
-      font-size: 1.1rem;
-    }
+/* — ここまで Part1 — */
+/* ===================== */
+/* ここから既存スタイル続き */
+/* ===================== */
 
-    .layout {
-      display: flex;
-      gap: 18px;
-      margin-top: 16px;
-      align-items: flex-start;
-    }
+.btn-auth span.icon { font-size: 1.1rem; }
 
-    .card {
-      background: radial-gradient(circle at top left, #111827 0, #020617 40%, #000 100%);
-      border-radius: var(--radius-lg);
-      border: 1px solid rgba(55, 65, 81, 0.7);
-      box-shadow: var(--shadow-soft);
-      padding: 16px 18px;
-      flex: 1;
-      min-width: 0;
-    }
+.layout {
+  display: flex;
+  gap: 18px;
+  margin-top: 16px;
+  align-items: flex-start;
+}
 
-    .card h2 {
-      margin-top: 0;
-      font-size: 1rem;
-      display: flex;
-      align-items: center;
-      gap: 8px;
-    }
+.card {
+  background: radial-gradient(circle at top left, #111827 0, #020617 40%, #000 100%);
+  border-radius: var(--radius-lg);
+  border: 1px solid rgba(55, 65, 81, 0.7);
+  box-shadow: var(--shadow-soft);
+  padding: 16px 18px;
+  flex: 1;
+  min-width: 0;
+}
 
-    .card h2 span.dot {
-      width: 8px;
-      height: 8px;
-      border-radius: 999px;
-      background: var(--accent);
-      box-shadow: 0 0 12px rgba(34, 197, 94, 0.9);
-    }
+.card h2 {
+  margin-top: 0;
+  font-size: 1rem;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
 
-    .card p.desc {
-      margin: 6px 0 14px;
-      font-size: 0.78rem;
-      color: var(--text-sub);
-      line-height: 1.5;
-    }
+.card h2 .dot {
+  width: 8px;
+  height: 8px;
+  border-radius: 999px;
+  background: var(--accent);
+  box-shadow: 0 0 12px rgba(34, 197, 94, 0.9);
+}
 
-    .section-label {
-      font-size: 0.8rem;
-      font-weight: 600;
-      margin: 10px 0 4px;
-      color: var(--text-sub);
-      display: flex;
-      align-items: center;
-      gap: 4px;
-    }
+...（※ここは前と同じスタイルなので省略可：あなたのファイルにはすでに入ってる部分です）...
 
-    .section-label span.bar {
-      display: inline-block;
-      width: 3px;
-      height: 14px;
-      border-radius: 999px;
-      background: linear-gradient(to bottom, var(--accent), transparent);
-    }
-
-    input, textarea, select {
-      width: 100%;
-      padding: 8px 10px;
-      border-radius: 10px;
-      border: 1px solid rgba(75, 85, 99, 0.9);
-      background: rgba(15, 23, 42, 0.9);
-      color: var(--text-main);
-      font-size: 0.85rem;
-      outline: none;
-      transition: border 0.15s, box-shadow 0.15s, background 0.15s;
-    }
-
-    input::placeholder,
-    textarea::placeholder {
-      color: #6b7280;
-    }
-
-    input:focus,
-    textarea:focus,
-    select:focus {
-      border-color: var(--accent);
-      box-shadow: 0 0 0 1px rgba(34, 197, 94, 0.5);
-      background: rgba(15, 23, 42, 0.98);
-    }
-
-    textarea {
-      resize: vertical;
-      min-height: 70px;
-      font-family: inherit;
-    }
-
-    .row-two {
-      display: flex;
-      gap: 8px;
-    }
-
-    .row-two > div {
-      flex: 1;
-    }
-
-    .preset {
-      display: flex;
-      flex-wrap: wrap;
-      gap: 6px;
-      margin-bottom: 10px;
-    }
-
-    .preset button {
-      border-radius: 999px;
-      border: 1px solid rgba(75, 85, 99, 0.9);
-      background: rgba(15, 23, 42, 0.9);
-      color: var(--text-sub);
-      font-size: 0.75rem;
-      padding: 4px 10px;
-      cursor: pointer;
-      transition: background 0.15s, color 0.15s, border 0.15s, transform 0.1s;
-    }
-
-    .preset button:hover {
-      background: rgba(34, 197, 94, 0.08);
-      border-color: var(--accent);
-      color: var(--accent);
-      transform: translateY(-1px);
-    }
-
-    .button-row {
-      display: flex;
-      flex-wrap: wrap;
-      gap: 8px;
-      margin-top: 10px;
-    }
-
-    .btn-main,
-    .btn-secondary,
-    .btn-danger,
-    .btn-ghost {
-      flex: 1;
-      min-width: 140px;
-      border-radius: 999px;
-      padding: 8px 10px;
-      font-size: 0.86rem;
-      font-weight: 600;
-      border: none;
-      cursor: pointer;
-      display: inline-flex;
-      align-items: center;
-      justify-content: center;
-      gap: 6px;
-      transition: transform 0.08s ease-out, box-shadow 0.15s, background 0.15s, opacity 0.15s;
-      white-space: nowrap;
-    }
-
-    .btn-main {
-      background: linear-gradient(135deg, var(--accent), #22c55e);
-      color: #000;
-      box-shadow: 0 14px 30px rgba(34, 197, 94, 0.45);
-    }
-
-    .btn-secondary {
-      background: rgba(15, 23, 42, 0.95);
-      border: 1px solid rgba(148, 163, 184, 0.6);
-      color: var(--text-sub);
-    }
-
-    .btn-danger {
-      background: linear-gradient(135deg, var(--danger), #b91c1c);
-      color: #fee2e2;
-      box-shadow: 0 14px 30px rgba(239, 68, 68, 0.4);
-    }
-
-    .btn-ghost {
-      background: transparent;
-      border: 1px dashed rgba(75, 85, 99, 0.8);
-      color: var(--text-sub);
-    }
-
-    .btn-main:hover,
-    .btn-secondary:hover,
-    .btn-danger:hover,
-    .btn-ghost:hover {
-      transform: translateY(-1px);
-      box-shadow: 0 18px 36px rgba(0, 0, 0, 0.6);
-      opacity: 0.95;
-    }
-
-    .btn-main span.icon,
-    .btn-secondary span.icon,
-    .btn-danger span.icon {
-      font-size: 1rem;
-    }
-
-    select {
-      background-image: linear-gradient(45deg, transparent 50%, #9ca3af 50%),
-                        linear-gradient(135deg, #9ca3af 50%, transparent 50%);
-      background-position: calc(100% - 14px) 50%, calc(100% - 9px) 50%;
-      background-size: 5px 5px, 5px 5px;
-      background-repeat: no-repeat;
-      appearance: none;
-    }
-
-    .pill-mini {
-      display: inline-flex;
-      align-items: center;
-      gap: 6px;
-      padding: 4px 8px;
-      border-radius: 999px;
-      font-size: 0.7rem;
-      border: 1px solid rgba(55, 65, 81, 0.8);
-      color: var(--text-sub);
-    }
-
-    .pill-mini span.dot {
-      width: 6px;
-      height: 6px;
-      border-radius: 999px;
-      background: #22c55e;
-    }
-
-    .result-block {
-      background: radial-gradient(circle at top left, rgba(34, 197, 94, 0.1), transparent 55%);
-      border-radius: 14px;
-      border: 1px solid rgba(55, 65, 81, 0.9);
-      padding: 10px 12px;
-      margin-bottom: 10px;
-    }
-
-    .result-block.danger {
-      background: radial-gradient(circle at top left, var(--danger-soft), transparent 55%);
-      border-color: rgba(153, 27, 27, 0.9);
-    }
-
-    .result-header {
-      display: flex;
-      justify-content: space-between;
-      align-items: center;
-      gap: 8px;
-      margin-bottom: 6px;
-    }
-
-    .result-header span.title {
-      font-size: 0.8rem;
-      font-weight: 600;
-      color: var(--text-sub);
-    }
-
-    .result-header span.counter {
-      font-size: 0.75rem;
-      color: var(--text-sub);
-    }
-
-    .ad-slot {
-      margin-top: 14px;
-      padding: 12px;
-      border-radius: 14px;
-      border: 1px dashed rgba(75, 85, 99, 0.9);
-      background: radial-gradient(circle at top left, rgba(59, 130, 246, 0.16), transparent 60%);
-      font-size: 0.78rem;
-      color: var(--text-sub);
-    }
-
-    .ad-slot strong {
-      color: #93c5fd;
-    }
-
-    footer {
-      margin-top: 16px;
-      font-size: 0.7rem;
-      color: #6b7280;
-      text-align: right;
-    }
-
-    /* スマホ対応 */
-    @media (max-width: 768px) {
-      .page {
-        padding: 12px 10px 30px;
-      }
-
-      .layout {
-        flex-direction: column;
-      }
-
-      .card {
-        padding: 14px 14px 16px;
-      }
-
-      .headline {
-        gap: 8px;
-      }
-
-      .headline-right {
-        justify-content: flex-start;
-      }
-
-      .button-row {
-        flex-direction: column;
-      }
-
-      .btn-main,
-      .btn-secondary,
-      .btn-danger,
-      .btn-ghost {
-        width: 100%;
-      }
-    }
+/* ===================== */
+/* スマホ対応 */
+/* ===================== */
+@media (max-width: 768px) {
+  .page { padding: 12px 10px 30px; }
+  .layout { flex-direction: column; }
+  .card { padding: 14px 14px 16px; }
+  .headline { gap: 8px; }
+  .headline-right { justify-content: flex-start; }
+  .button-row { flex-direction: column; }
+  .btn-main, .btn-secondary, .btn-danger, .btn-ghost { width: 100%; }
+}
   </style>
 </head>
+
 <body>
   <div class="page">
-   
+    <header>
+      <div class="headline">
 
-<header>
-  <div class="headline">
-    <div class="headline-left">
-      <h1>
-        Gmail 整理ツール
-        <span class="badge">automaker-hub</span>
-      </h1>
-      <p>いらないメールを一気に整理。&nbsp;検索条件を自動生成して、削除・アーカイブ・既読化までまとめて実行します。</p>
-    </div>
+        <!-- 左：タイトル -->
+        <div class="headline-left">
+          <h1>
+            Gmail 整理ツール
+            <span class="badge">automaker-hub</span>
+          </h1>
+          <p>いらないメールを一気に整理。検索条件を自動生成して、削除・アーカイブ・既読化までまとめて実行します。</p>
+        </div>
 
-    <!-- ★ 修正版：ここに問い合わせボタン -->
-    <div class="headline-right">
-      <span class="pill">
-        Gmail 用ツール / <strong>収益化対応レイアウト</strong>
-      </span>
+        <!-- 右：タグ + 問い合わせボタン -->
+        <div class="headline-right">
+          <span class="pill">Gmail 用ツール / <strong>収益化対応レイアウト</strong></span>
 
-      <!-- 問い合わせボタン（自然配置） -->
-      <a href="contact.html" class="btn-contact">お問い合わせ</a>
-    </div>
+          <!-- ← コレだけでOK（修正版ボタン） -->
+          <a href="contact.html" class="btn-contact">お問い合わせ</a>
+        </div>
+      </div>
+
+      <!-- OAuth ボタン -->
+      <div class="auth-area">
+        <button id="btn-authorize" class="btn-auth"><span class="icon">🔐</span>Google アカウント連携（OAuth）</button>
+        <button id="btn-signout" class="btn-auth secondary"><span class="icon">🚪</span>切断 / サインアウト</button>
+        <span class="pill-mini" id="auth-status"><span class="dot"></span> ステータス: 未連携</span>
+      </div>
+
+    </header>
+
+    <!-- ここから本体 UI（※あなたの index.html と同じなので省略） -->
+    <!-- りくが貼ってくれた UI 部分はそのまま使ってOK！ -->
+
+    <!-- ▼▼▼ JavaScript（あなたの元のコードと同じ） ▼▼▼ -->
+    <script>
+      // ▼ ここもすべて前と同じ（Gmail ダミー実装）
+      // 必ずあなたの元コードをここにそのまま貼ること！
+    </script>
+
   </div>
-
-  <!-- OAuth / API 接続ボタン -->
-  <div class="auth-area">
-    <button id="btn-authorize" class="btn-auth">
-      <span class="icon">🔐</span>
-      Google アカウント連携（OAuth）
-    </button>
-    <button id="btn-signout" class="btn-auth secondary">
-      <span class="icon">🚪</span>
-      切断 / サインアウト
-    </button>
-    <span class="pill-mini" id="auth-status">
-      <span class="dot"></span> ステータス: 未連携
-    </span>
-  </div>
-</header>
-
-
-
-
-    <main class="layout">
-      <!-- 左側：条件設定エリア -->
-      <section class="card" aria-label="条件設定">
-        <h2>
-          <span class="dot"></span>
-          検索条件の設定
-        </h2>
-        <p class="desc">
-          削除・アーカイブ・既読化したいメールの条件を入力してください。<br />
-          下の「プリセット」から、よく使うパターンをワンタップで呼び出せます。
-        </p>
-
-        <div class="section-label">
-          <span class="bar"></span> よく使うプリセット
-        </div>
-        <div class="preset">
-          <button data-preset="rakuten">楽天系メール</button>
-          <button data-preset="amazon">Amazon通知</button>
-          <button data-preset="promo">広告／プロモーション</button>
-          <button data-preset="magazine">メルマガ全般</button>
-          <button data-preset="old-promo">30日より前のプロモ</button>
-        </div>
-
-        <div class="section-label">
-          <span class="bar"></span> 送信元（from）
-        </div>
-        <input id="from-input" type="text" placeholder="例：news@rakuten.co.jp / @example.com" />
-
-        <div class="section-label">
-          <span class="bar"></span> 件名に含まれる言葉
-        </div>
-        <input id="subject-input" type="text" placeholder="例：メルマガ, クーポン" />
-
-        <div class="section-label">
-          <span class="bar"></span> 本文に含まれる言葉
-        </div>
-        <input id="body-input" type="text" placeholder="カンマ区切りで複数可" />
-
-        <div class="section-label">
-          <span class="bar"></span> 除外キーワード
-        </div>
-        <input id="exclude-input" type="text" placeholder="重要な通知など除外したい場合" />
-
-        <div class="row-two">
-          <div>
-            <div class="section-label">
-              <span class="bar"></span> いつ以降のメール
-            </div>
-            <input id="after-input" type="text" placeholder="例：7d / 2024-01-01" />
-          </div>
-          <div>
-            <div class="section-label">
-              <span class="bar"></span> いつ以前のメール
-            </div>
-            <input id="before-input" type="text" placeholder="例：30d / 2023-12-31" />
-          </div>
-        </div>
-
-        <div class="section-label">
-          <span class="bar"></span> 生成された検索条件（編集可能）
-        </div>
-        <textarea id="query-text" rows="4" placeholder="ここに検索条件が自動生成されます"></textarea>
-
-        <div class="section-label">
-          <span class="bar"></span> 実行する操作
-        </div>
-        <select id="action-select">
-          <option value="trash">ゴミ箱へ移動（削除）</option>
-          <option value="archive">アーカイブ</option>
-          <option value="read">既読にする</option>
-        </select>
-
-        <div class="button-row">
-          <button id="btn-generate" class="btn-main">
-            <span class="icon">✨</span> 検索条件を自動生成
-          </button>
-          <button id="btn-preview" class="btn-secondary">
-            <span class="icon">🔍</span> プレビュー（条件チェック）
-          </button>
-          <button id="btn-execute" class="btn-danger">
-            <span class="icon">⚠️</span> この条件で実行
-          </button>
-        </div>
-      </section>
-
-      <!-- 右側：プレビュー / 実行結果エリア -->
-      <section class="card" aria-label="実行結果">
-        <h2>
-          <span class="dot"></span>
-          プレビューと実行結果
-        </h2>
-        <p class="desc">
-          実行前に必ずプレビューして、本当に消してよいメールだけが対象になっているか確認してください。
-        </p>
-
-        <div class="result-block">
-          <div class="result-header">
-            <span class="title">現在のプレビュー</span>
-            <span class="counter" id="preview-count-label">対象件数: - 件（サンプル）</span>
-          </div>
-          <textarea id="preview-text" rows="6" placeholder="「検索条件を自動生成 → プレビュー」の順に操作すると、ここに結果の例が表示されます。"></textarea>
-        </div>
-
-        <div class="result-block danger">
-          <div class="result-header">
-            <span class="title">実行結果</span>
-            <span class="counter" id="result-count-label">最終件数: - 件（サンプル）</span>
-          </div>
-          <textarea id="result-text" rows="6" placeholder="まだ実行結果はありません。「この条件で実行」を押すと、ここに実行内容の履歴（実行結果）が表示されます。"></textarea>
-        </div>
-
-        <div class="button-row">
-          <button id="btn-clear-result" class="btn-ghost">
-            実行結果をクリア
-          </button>
-        </div>
-
-        <div class="ad-slot">
-          <strong>収益スペース（将来用）</strong><br />
-          ここに広告バナー、アフィリエイトリンク、有料版への導線などを追加できます。<br />
-          例：<br />
-          ・「高速版」や「自動定期実行版」へのリンク<br />
-          ・メール断捨離のノウハウ記事へのリンク
-        </div>
-      </section>
-    </main>
-
-    <footer>
-      Powered by automaker-hub / Gmail 整理ツール
-    </footer>
-  </div>
-
-  <!-- ▼▼▼ JavaScript：ボタンに処理を紐づけ / OAuth ひな型 ▼▼▼ -->
-  <script>
-    // ★ Gmail OAuth / API 実装用の設定（実際に使うときは自分の値に置き換え）
-    const CLIENT_ID = "YOUR_CLIENT_ID.apps.googleusercontent.com"; // TODO: 差し替え
-    const API_KEY = "YOUR_API_KEY"; // TODO: 差し替え
-    const SCOPES = "https://www.googleapis.com/auth/gmail.modify";
-
-    let isSignedIn = false;
-
-    const authStatusEl = document.getElementById("auth-status");
-    const queryTextEl = document.getElementById("query-text");
-    const previewTextEl = document.getElementById("preview-text");
-    const resultTextEl = document.getElementById("result-text");
-    const previewCountLabel = document.getElementById("preview-count-label");
-    const resultCountLabel = document.getElementById("result-count-label");
-
-    function updateAuthStatus() {
-      const dot = authStatusEl.querySelector(".dot");
-      if (isSignedIn) {
-        authStatusEl.innerHTML = '<span class="dot"></span> ステータス: 連携中';
-      } else {
-        authStatusEl.innerHTML = '<span class="dot"></span> ステータス: 未連携';
-      }
-    }
-
-    // ▼ OAuth 認証（ひな型）
-    async function handleAuthorize() {
-      // 本格的にやる場合は Google Cloud Console で OAuth クライアントを作成し、
-      // Google Identity Services / gapi.client を使ってトークン取得します。
-      // ここでは「連携しているっぽく見せる」ダミー処理にしてあります。
-      isSignedIn = true;
-      updateAuthStatus();
-      alert("ダミー：Google アカウント連携が完了した想定です。実運用する場合は OAuth 実装が必要です。");
-    }
-
-    function handleSignout() {
-      isSignedIn = false;
-      updateAuthStatus();
-      alert("ダミー：サインアウトしました。実運用する場合はトークンの破棄処理が必要です。");
-    }
-
-    // ▼ 検索条件の文字列を組み立てる
-    function buildGmailQuery() {
-      const from = document.getElementById("from-input").value.trim();
-      const subject = document.getElementById("subject-input").value.trim();
-      const body = document.getElementById("body-input").value.trim();
-      const exclude = document.getElementById("exclude-input").value.trim();
-      const after = document.getElementById("after-input").value.trim();
-      const before = document.getElementById("before-input").value.trim();
-
-      const parts = [];
-
-      if (from) {
-        parts.push(`from:(${from})`);
-      }
-      if (subject) {
-        parts.push(`subject:(${subject})`);
-      }
-      if (body) {
-        parts.push(`{${body}}`);
-      }
-      if (exclude) {
-        parts.push(`-{${exclude}}`);
-      }
-      if (after) {
-        parts.push(`after:${after}`);
-      }
-      if (before) {
-        parts.push(`before:${before}`);
-      }
-
-      return parts.join(" ");
-    }
-
-    // ▼ プリセットボタン
-    function applyPreset(key) {
-      const fromInput = document.getElementById("from-input");
-      const subjectInput = document.getElementById("subject-input");
-      const bodyInput = document.getElementById("body-input");
-      const excludeInput = document.getElementById("exclude-input");
-      const afterInput = document.getElementById("after-input");
-      const beforeInput = document.getElementById("before-input");
-
-      // ひとまず全部リセット
-      fromInput.value = "";
-      subjectInput.value = "";
-      bodyInput.value = "";
-      excludeInput.value = "";
-      afterInput.value = "";
-      beforeInput.value = "";
-
-      switch (key) {
-        case "rakuten":
-          fromInput.value = "@rakuten.co.jp";
-          subjectInput.value = "ポイント, お得, セール";
-          break;
-        case "amazon":
-          fromInput.value = "@amazon.co.jp";
-          subjectInput.value = "おすすめ, セール, キャンペーン";
-          break;
-        case "promo":
-          bodyInput.value = "セール, キャンペーン, 広告";
-          break;
-        case "magazine":
-          subjectInput.value = "メルマガ, newsletter";
-          break;
-        case "old-promo":
-          bodyInput.value = "セール, キャンペーン, 広告";
-          beforeInput.value = "30d";
-          break;
-      }
-
-      const query = buildGmailQuery();
-      queryTextEl.value = query;
-    }
-
-    // ▼ 検索条件を自動生成
-    function handleGenerateQuery() {
-      const query = buildGmailQuery();
-      queryTextEl.value = query;
-      if (!query) {
-        alert("検索条件が空です。送信元や件名などを入力してください。");
-      }
-    }
-
-    // ▼ プレビュー（本当は Gmail API で検索 → 件数や例を出す）
-    async function handlePreview() {
-      const query = queryTextEl.value.trim();
-      if (!query) {
-        alert("検索条件が空です。「検索条件を自動生成」を押すか、条件を入力してください。");
-        return;
-      }
-
-      // 実運用では Gmail API の users.messages.list を呼んで件数・サンプルを取得
-      // ここではサンプルテキストを生成
-      previewCountLabel.textContent = "対象件数: サンプルで 123 件";
-      previewTextEl.value =
-        `【サンプルプレビュー】\n` +
-        `検索条件: ${query}\n\n` +
-        `実際に Gmail API をつなぐと、ここにヒットしたメールの件数や一部リストを表示できます。`;
-    }
-
-    // ▼ この条件で実行（本当は Gmail API で削除/アーカイブ/既読）
-    async function handleExecute() {
-      const query = queryTextEl.value.trim();
-      const action = document.getElementById("action-select").value;
-
-      if (!query) {
-        alert("検索条件が空です。まずプレビューして内容を確認してください。");
-        return;
-      }
-
-      if (!confirm("この条件で本番実行する想定のテストメッセージを表示します。\n※ 実際の Gmail にはまだ何もしません。")) {
-        return;
-      }
-
-      let actionLabel = "";
-      if (action === "trash") actionLabel = "ゴミ箱へ移動（削除）";
-      if (action === "archive") actionLabel = "アーカイブ";
-      if (action === "read") actionLabel = "既読にする";
-
-      // 実運用では users.messages.batchModify などを呼ぶ
-      resultCountLabel.textContent = "最終件数: サンプルで 123 件";
-      const now = new Date().toLocaleString("ja-JP");
-      const log =
-        `=== 実行結果（テスト） ===\n` +
-        `日時: ${now}\n` +
-        `操作: ${actionLabel}\n` +
-        `検索条件: ${query}\n` +
-        `対象件数（サンプル）: 123 件\n\n` +
-        (resultTextEl.value ? resultTextEl.value + "\n\n" : "");
-      resultTextEl.value = log;
-    }
-
-    function handleClearResult() {
-      resultTextEl.value = "";
-      resultCountLabel.textContent = "最終件数: - 件（サンプル）";
-    }
-
-    // ▼ イベント紐づけ
-    document.getElementById("btn-authorize").addEventListener("click", handleAuthorize);
-    document.getElementById("btn-signout").addEventListener("click", handleSignout);
-
-    document.getElementById("btn-generate").addEventListener("click", handleGenerateQuery);
-    document.getElementById("btn-preview").addEventListener("click", handlePreview);
-    document.getElementById("btn-execute").addEventListener("click", handleExecute);
-    document.getElementById("btn-clear-result").addEventListener("click", handleClearResult);
-
-    document.querySelectorAll(".preset button").forEach((btn) => {
-      btn.addEventListener("click", () => {
-        const key = btn.getAttribute("data-preset");
-        applyPreset(key);
-      });
-    });
-
-    updateAuthStatus();
-  </script>
 </body>
 </html>
