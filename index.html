@@ -6,6 +6,27 @@
   <title>Gmail 整理ツール - automaker-hub</title>
 
   <style>
+
+
+.btn-contact {
+  padding: 8px 14px;
+  background: rgba(30, 31, 41, 0.9);
+  border: 1px solid #3a3b45;
+  border-radius: 10px;
+  color: #e4e4e7;
+  font-size: 0.82rem;
+  text-decoration: none;
+  transition: 0.2s;
+  display: inline-flex;
+  align-items: center;
+}
+
+.btn-contact:hover {
+  background: rgba(46, 47, 56, 0.9);
+  border-color: #4b4c58;
+}
+
+
     :root {
       --bg: #0f172a;
       --card-bg: #020617;
@@ -435,37 +456,47 @@
 </head>
 <body>
   <div class="page">
-    <header>
-      <div class="headline">
-        <div class="headline-left">
-          <h1>
-            Gmail 整理ツール
-            <span class="badge">automaker-hub</span>
-          </h1>
-          <p>いらないメールを一気に整理。&nbsp;検索条件を自動生成して、削除・アーカイブ・既読化までまとめて実行します。</p>
-        </div>
-        <div class="headline-right">
-          <span class="pill">
-            Gmail 用ツール / <strong>収益化対応レイアウト</strong>
-          </span>
-        </div>
-      </div>
+   
 
-      <!-- OAuth / API 接続ボタン（JSで動作を紐づけ） -->
-      <div class="auth-area">
-        <button id="btn-authorize" class="btn-auth">
-          <span class="icon">🔐</span>
-          Google アカウント連携（OAuth）
-        </button>
-        <button id="btn-signout" class="btn-auth secondary">
-          <span class="icon">🚪</span>
-          切断 / サインアウト
-        </button>
-        <span class="pill-mini" id="auth-status">
-          <span class="dot"></span> ステータス: 未連携
-        </span>
-      </div>
-    </header>
+<header>
+  <div class="headline">
+    <div class="headline-left">
+      <h1>
+        Gmail 整理ツール
+        <span class="badge">automaker-hub</span>
+      </h1>
+      <p>いらないメールを一気に整理。&nbsp;検索条件を自動生成して、削除・アーカイブ・既読化までまとめて実行します。</p>
+    </div>
+
+    <!-- ★ 修正版：ここに問い合わせボタン -->
+    <div class="headline-right">
+      <span class="pill">
+        Gmail 用ツール / <strong>収益化対応レイアウト</strong>
+      </span>
+
+      <!-- 問い合わせボタン（自然配置） -->
+      <a href="contact.html" class="btn-contact">お問い合わせ</a>
+    </div>
+  </div>
+
+  <!-- OAuth / API 接続ボタン -->
+  <div class="auth-area">
+    <button id="btn-authorize" class="btn-auth">
+      <span class="icon">🔐</span>
+      Google アカウント連携（OAuth）
+    </button>
+    <button id="btn-signout" class="btn-auth secondary">
+      <span class="icon">🚪</span>
+      切断 / サインアウト
+    </button>
+    <span class="pill-mini" id="auth-status">
+      <span class="dot"></span> ステータス: 未連携
+    </span>
+  </div>
+</header>
+
+
+
 
     <main class="layout">
       <!-- 左側：条件設定エリア -->
